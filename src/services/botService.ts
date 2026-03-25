@@ -43,12 +43,6 @@ const TRAINER_PROMPT = `Ты — тренажёр по промт-инжинир
 ### 💡 Улучшенный промпт:
 [полностью переписанный промпт со всеми элементами ПЛК-ФОТ]`;
 
-// Читаем GigaChat ключ
-const getGigaChatKey = (): string => {
-  const raw = localStorage.getItem('apikey_gigachat') || localStorage.getItem('api_key_gigachat') || '';
-  try { return atob(raw); } catch { return raw; }
-};
-
 // Читаем Claude ключ (fallback)
 const getClaudeKey = (): string => {
   const variants = ['apikey_claude', 'api_key_claude', 'api_key_anthropic'];
@@ -66,15 +60,12 @@ const getClaudeKey = (): string => {
   return '';
 };
 
-// Вызов GigaChat
+// Вызов GigaChat через прокси-сервер
 const callGigaChat = async (
   system: string,
   messages: Message[],
   context: string
 ): Promise<string> => {
-  const authKey = getGigaChatKey();
-  if (!authKey) return callClaude(system, messages, context);
-
   const lastMsg = messages[messages.length - 1];
   const userContent = context
     ? `КОНТЕКСТ ИЗ БАЗЫ ЗНАНИЙ КУРСА:\n${context}\n\nВОПРОС:\n${lastMsg.content}`
@@ -86,20 +77,8 @@ const callGigaChat = async (
   ];
 
   try {
-    // Получаем токен GigaChat
-    const tokenRes = await fetch(
-      'https://ngw.devices.sberbank.ru:9443/api/v2/oauth',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json',
-          'RqUID': crypto.randomUUID(),
-          'Authorization': `Basic ${authKey}`
-        },
-        body: 'scope=GIGACHAT_API_PERS'
-      }
-    );
+    // Получаем токен через прокси (ключ хранится на сервере)
+    const tokenRes = await fetch('/api/gigachat/token', { method: 'POST' });
 
     if (!tokenRes.ok) {
       console.warn('GigaChat token failed, fallback to Claude');
@@ -108,25 +87,20 @@ const callGigaChat = async (
 
     const { access_token } = await tokenRes.json();
 
-    const chatRes = await fetch(
-      'https://gigachat.devices.sberbank.ru/api/v1/chat/completions',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${access_token}`
-        },
-        body: JSON.stringify({
-          model: 'GigaChat',
-          messages: [
-            { role: 'system', content: system },
-            ...apiMessages
-          ],
-          max_tokens: 1500,
-          temperature: 0.7
-        })
-      }
-    );
+    const chatRes = await fetch('/api/gigachat/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_token,
+        model: 'GigaChat',
+        messages: [
+          { role: 'system', content: system },
+          ...apiMessages
+        ],
+        max_tokens: 1500,
+        temperature: 0.7
+      })
+    });
 
     if (!chatRes.ok) {
       console.warn('GigaChat chat failed, fallback to Claude');
