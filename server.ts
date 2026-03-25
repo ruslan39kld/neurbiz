@@ -20,6 +20,33 @@ app.use((_req, res, next) => {
 
 const agent = new https.Agent({ rejectUnauthorized: false });
 
+let cachedToken = { token: '', expiresAt: 0 };
+
+async function getAccessToken(authKey: string): Promise<string> {
+  if (cachedToken.token && Date.now() < cachedToken.expiresAt) {
+    return cachedToken.token;
+  }
+
+  const result = await httpsPost(
+    'https://ngw.devices.sberbank.ru:9443/api/v2/oauth',
+    {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Accept: 'application/json',
+      RqUID: crypto.randomUUID(),
+      Authorization: `Basic ${authKey}`,
+    },
+    'scope=GIGACHAT_API_PERS'
+  );
+
+  if (result.status < 200 || result.status >= 300) {
+    throw new Error(`GigaChat OAuth error: ${result.status}`);
+  }
+
+  const { access_token } = result.data as { access_token: string };
+  cachedToken = { token: access_token, expiresAt: Date.now() + 25 * 60 * 1000 };
+  return access_token;
+}
+
 function httpsPost(url: string, headers: Record<string, string>, body: string): Promise<{ status: number; data: unknown }> {
   return new Promise((resolve, reject) => {
     const u = new URL(url);
@@ -50,7 +77,7 @@ function httpsPost(url: string, headers: Record<string, string>, body: string): 
   });
 }
 
-// POST /api/gigachat/token — получить access_token от GigaChat OAuth
+// POST /api/gigachat/token — получить access_token (с кешированием на 25 мин)
 app.post('/api/gigachat/token', async (_req, res) => {
   const authKey = process.env.GIGACHAT_AUTH_KEY;
   if (!authKey) {
@@ -58,44 +85,31 @@ app.post('/api/gigachat/token', async (_req, res) => {
   }
 
   try {
-    const result = await httpsPost(
-      'https://ngw.devices.sberbank.ru:9443/api/v2/oauth',
-      {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Accept: 'application/json',
-        RqUID: crypto.randomUUID(),
-        Authorization: `Basic ${authKey}`,
-      },
-      'scope=GIGACHAT_API_PERS'
-    );
-
-    if (result.status < 200 || result.status >= 300) {
-      return res.status(result.status).json({ error: 'Ошибка получения токена GigaChat', detail: result.data });
-    }
-
-    res.json(result.data);
+    const access_token = await getAccessToken(authKey);
+    res.json({ access_token });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : String(e);
     res.status(500).json({ error: message });
   }
 });
 
-// POST /api/gigachat/chat — проксировать запрос к GigaChat Chat API
+// POST /api/gigachat/chat — проксировать запрос к GigaChat (токен получается на сервере)
 app.post('/api/gigachat/chat', async (req, res) => {
-  const { access_token, ...chatBody } = req.body as { access_token: string; [key: string]: unknown };
-
-  if (!access_token) {
-    return res.status(400).json({ error: 'access_token обязателен' });
+  const authKey = process.env.GIGACHAT_AUTH_KEY;
+  if (!authKey) {
+    return res.status(500).json({ error: 'GIGACHAT_AUTH_KEY не настроен на сервере' });
   }
 
   try {
+    const access_token = await getAccessToken(authKey);
+
     const result = await httpsPost(
       'https://gigachat.devices.sberbank.ru/api/v1/chat/completions',
       {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${access_token}`,
       },
-      JSON.stringify(chatBody)
+      JSON.stringify(req.body)
     );
 
     if (result.status < 200 || result.status >= 300) {
