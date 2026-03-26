@@ -1,7 +1,11 @@
 import express from 'express';
 import https from 'https';
 import crypto from 'crypto';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { config } from 'dotenv';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 config();
 
@@ -121,6 +125,14 @@ app.post('/api/gigachat/chat', async (req, res) => {
     const message = e instanceof Error ? e.message : String(e);
     res.status(500).json({ error: message });
   }
+});
+
+// Раздаём собранный фронтенд
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Все остальные роуты → index.html (SPA fallback)
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
