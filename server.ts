@@ -128,11 +128,11 @@ app.post('/api/gigachat/chat', async (req, res) => {
 });
 
 // Раздаём собранный фронтенд
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(process.cwd(), 'dist')));
 
 // Все остальные роуты → index.html (SPA fallback)
 app.get('*', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
