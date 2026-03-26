@@ -15,4 +15,4 @@ run:
   command: npm run start
   persistenceMount: /data
   containerPort: "3001"
-  servicePort: "80
+  servicePort: "80"
