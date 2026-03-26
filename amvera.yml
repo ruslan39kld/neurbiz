@@ -1,0 +1,9 @@
+meta:
+  environment: nodejs
+  toolVersion: "20"
+build:
+  buildCommand: npm install && npm run build
+run:
+  runCommand: npm run server
+  persistenceMount: /data
+  containerPort: 3001
