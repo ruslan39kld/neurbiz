@@ -49,7 +49,7 @@ export default function App() {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   const [activeTab, setActiveTab] = useState('about');
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
