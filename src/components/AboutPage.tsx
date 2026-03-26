@@ -531,14 +531,14 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
               { x: 1000, y: 620, width: 380, height: 260, icon: '🔗', title: 'Интеграции и API', tags: ['1C', 'Bitrix24', 'amoCRM', 'Webhooks', 'OAuth', 'SOAP', 'GraphQL', 'RabbitMQ', 'Kafka'] }
             ].map((mod, i) => (
               <foreignObject key={i} x={mod.x} y={mod.y} width={mod.width} height={mod.height}>
-                <div style={{width:'100%', height:'100%', background:'rgba(255,255,255,0.97)', border:'2px solid rgba(255,107,43,0.45)', borderRadius:'14px', padding:'20px', boxSizing:'border-box', display:'flex', flexDirection:'column', gap:'12px', overflow:'hidden'}}>
+                <div style={{width:'100%', height:'100%', background:'var(--bg-card)', border:'2px solid rgba(255,107,43,0.45)', borderRadius:'14px', padding:'20px', boxSizing:'border-box', display:'flex', flexDirection:'column', gap:'12px', overflow:'hidden'}}>
                   <div style={{display:'flex', alignItems:'center', gap:'10px', borderBottom:'1px solid rgba(255,107,43,0.15)', paddingBottom:'12px'}}>
                     <span style={{fontSize:'26px'}}>{mod.icon}</span>
-                    <span style={{fontFamily:'Orbitron', fontSize:'16px', fontWeight:700, color:'#1A1A2E'}}>{mod.title}</span>
+                    <span style={{fontFamily:'Orbitron', fontSize:'16px', fontWeight:700, color:'var(--text-main)'}}>{mod.title}</span>
                   </div>
                   <div style={{display:'flex', flexWrap:'wrap', gap:'6px'}}>
                     {mod.tags.map((tag, j) => (
-                      <span key={j} style={{fontSize:'13px', padding:'6px 12px', borderRadius:'999px', background:'#F0F0F5', color:'#222', border:'1px solid #CCCCDA', whiteSpace:'nowrap'}}>
+                      <span key={j} style={{fontSize:'13px', padding:'6px 12px', borderRadius:'999px', background:'var(--bg-primary)', color:'var(--text-main)', border:'1px solid var(--border)', whiteSpace:'nowrap'}}>
                         {tag}
                       </span>
                     ))}
@@ -564,15 +564,15 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-white border-2 border-[#FF6B2B]/40 rounded-[16px] p-4 flex flex-col gap-2.5"
+              className="bg-[var(--bg-card)] border-2 border-[#FF6B2B]/40 rounded-[16px] p-4 flex flex-col gap-2.5"
             >
               <div className="flex items-center gap-2 border-b border-[#FF6B2B]/15 pb-2">
                 <span className="text-[24px]">{mod.icon}</span>
-                <span className="font-orbitron text-[14px] font-bold text-[#1A1A2E]">{mod.title}</span>
+                <span className="font-orbitron text-[14px] font-bold text-[var(--text-main)]">{mod.title}</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {mod.tags.map((tag, j) => (
-                  <span key={j} className="text-[11px] px-2 py-1 rounded-full bg-[#F2F2F6] text-[#333] border border-[#D0D0DA] whitespace-nowrap">
+                  <span key={j} className="text-[11px] px-2 py-1 rounded-full bg-[var(--bg-primary)] text-[var(--text-main)] border border-[var(--border)] whitespace-nowrap">
                     {tag}
                   </span>
                 ))}

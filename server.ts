@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 config();
 
 const app = express();
-
+const PORT = Number(process.env.PORT) || 3001;
 
 app.use(express.json());
 
@@ -128,14 +128,13 @@ app.post('/api/gigachat/chat', async (req, res) => {
 });
 
 // Раздаём собранный фронтенд
-app.use(express.static(path.join(process.cwd(), 'dist')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // Все остальные роуты → index.html (SPA fallback)
 app.get('*', (_req, res) => {
-  res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-const PORT = Number(process.env.PORT) || 3001;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`GigaChat proxy server запущен на http://0.0.0.0:${PORT}`);
 });
