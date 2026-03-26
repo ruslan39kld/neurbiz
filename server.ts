@@ -137,5 +137,5 @@ app.get('*', (_req, res) => {
 
 const PORT = Number(process.env.PORT) || 3001;
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`GigaChat proxy server запущен на http://localhost:${PORT}`);
+  console.log(`GigaChat proxy server запущен на http://0.0.0.0:${PORT}`);
 });
