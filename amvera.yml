@@ -6,4 +6,5 @@ build:
 run:
   runCommand: npm run server
   persistenceMount: /data
-  containerPort: 3001
+  containerPort: 80
+  servicePort: 80
