@@ -227,7 +227,6 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                   />
                 </div>
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="text-[24px]">🧠</span>
                   <h3 className="font-orbitron text-[20px] font-bold text-[#FF6B35]">
                     AI-Логика проекта
                   </h3>
@@ -266,7 +265,6 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                   />
                 </div>
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="text-[24px]">🛡️</span>
                   <h3 className="font-orbitron text-[20px] font-bold text-[#FF6B35]">
                     Безопасность продукта
                   </h3>
@@ -322,7 +320,6 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                 </div>
                 <div className="p-6 flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[24px]">🤝</span>
                     <h3 className="font-orbitron text-[18px] font-bold text-[#F4621F]">
                       Порядок в процессах
                     </h3>
@@ -350,7 +347,6 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                 </div>
                 <div className="p-6 flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[24px]">⚙️</span>
                     <h3 className="font-orbitron text-[18px] font-bold text-[#F4621F]">
                       Единая структура предприятия
                     </h3>
@@ -378,7 +374,6 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                 </div>
                 <div className="p-6 flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[24px]">📱</span>
                     <h3 className="font-orbitron text-[18px] font-bold text-[#F4621F]">
                       Скорость и экономия
                     </h3>
