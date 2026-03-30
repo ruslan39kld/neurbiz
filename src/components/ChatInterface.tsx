@@ -305,22 +305,27 @@ export default function ChatInterface({ botType, onClose }: ChatInterfaceProps) 
           </button>
         </div>
         <div className="mt-3 flex justify-center">
-          <a 
-            href="https://t.me/AIEngineerPro_bot" 
-            target="_blank" 
+          <a
+            href="https://t.me/AIEngineerPro_bot"
+            target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] text-[#64748B] hover:text-[#F97316] flex items-center gap-1 transition-colors"
+            className="text-[14px] text-[#64748B] hover:text-[#F97316] flex items-center gap-1.5 transition-colors font-medium"
           >
-            <ExternalLink size={10} />
-            🔗 Полная версия в Telegram @AIEngineerPro_bot
+            <ExternalLink size={13} />
+            <span style={{ animation: 'tgPulse 1.5s infinite' }}>🔗</span>
+            Полная версия в Telegram @AIEngineerPro_bot
           </a>
         </div>
       </div>
-      
+
       <style>{`
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-6px); }
+        }
+        @keyframes tgPulse {
+          0%, 100% { color: inherit; filter: none; }
+          50% { filter: drop-shadow(0 0 4px #FFD700); opacity: 0.7; }
         }
       `}</style>
     </div>
