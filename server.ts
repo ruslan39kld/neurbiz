@@ -17,17 +17,17 @@ app.use(express.json());
 app.use((_req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, x-gigachat-auth-key');
   if (_req.method === 'OPTIONS') return res.sendStatus(200);
   next();
 });
 
 const agent = new https.Agent({ rejectUnauthorized: false });
 
-let cachedToken = { token: '', expiresAt: 0 };
+let cachedToken = { token: '', expiresAt: 0, authKey: '' };
 
 async function getAccessToken(authKey: string): Promise<string> {
-  if (cachedToken.token && Date.now() < cachedToken.expiresAt) {
+  if (cachedToken.token && Date.now() < cachedToken.expiresAt && cachedToken.authKey === authKey) {
     return cachedToken.token;
   }
 
@@ -47,7 +47,7 @@ async function getAccessToken(authKey: string): Promise<string> {
   }
 
   const { access_token } = result.data as { access_token: string };
-  cachedToken = { token: access_token, expiresAt: Date.now() + 25 * 60 * 1000 };
+  cachedToken = { token: access_token, expiresAt: Date.now() + 25 * 60 * 1000, authKey };
   return access_token;
 }
 
@@ -82,11 +82,12 @@ function httpsPost(url: string, headers: Record<string, string>, body: string): 
 }
 
 // POST /api/gigachat/token — получить access_token (с кешированием на 25 мин)
-app.post('/api/gigachat/token', async (_req, res) => {
-  const authKey = process.env.GIGACHAT_AUTH_KEY;
+app.post('/api/gigachat/token', async (req, res) => {
+  const authKey = (req.headers['x-gigachat-auth-key'] as string) || process.env.GIGACHAT_AUTH_KEY;
   if (!authKey) {
     return res.status(500).json({ error: 'GIGACHAT_AUTH_KEY не настроен на сервере' });
   }
+  console.log(`[GigaChat /token] Using auth key: ${authKey.substring(0, 10)}...`);
 
   try {
     const access_token = await getAccessToken(authKey);
@@ -99,10 +100,11 @@ app.post('/api/gigachat/token', async (_req, res) => {
 
 // POST /api/gigachat/chat — проксировать запрос к GigaChat (токен получается на сервере)
 app.post('/api/gigachat/chat', async (req, res) => {
-  const authKey = process.env.GIGACHAT_AUTH_KEY;
+  const authKey = (req.headers['x-gigachat-auth-key'] as string) || process.env.GIGACHAT_AUTH_KEY;
   if (!authKey) {
     return res.status(500).json({ error: 'GIGACHAT_AUTH_KEY не настроен на сервере' });
   }
+  console.log(`[GigaChat /chat] Using auth key: ${authKey.substring(0, 10)}...`);
 
   try {
     const access_token = await getAccessToken(authKey);
