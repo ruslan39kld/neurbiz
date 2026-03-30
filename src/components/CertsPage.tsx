@@ -81,7 +81,7 @@ export default function CertsPage() {
     }
   };
 
-  const isPdf = (url: string) => url.toLowerCase().endsWith('.pdf.pdf');
+  const isPdf = (url: string) => url.toLowerCase().endsWith('.pdf');
 
   const handleOpenCert = (cert: typeof certificates[0]) => {
     setLoadError(false);
