@@ -222,10 +222,10 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                 className="bg-[var(--bg-card)] border-l-4 border-[#FF6B35] rounded-[12px] p-8 shadow-sm flex flex-col"
               >
                 <div className="w-full aspect-video mb-6 overflow-hidden rounded-[8px]">
-                  <img 
-                    src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20logika.JPG" 
-                    alt="AI-Логика проекта" 
-                    className="w-full h-full object-cover"
+                  <img
+                    src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20logika.JPG"
+                    alt="AI-Логика проекта"
+                    className="w-full h-full object-cover object-top"
                   />
                 </div>
                 <div className="flex items-center gap-3 mb-6">
@@ -261,10 +261,10 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                 className="bg-[var(--bg-card)] border-l-4 border-[#FF6B35] rounded-[12px] p-8 shadow-sm flex flex-col"
               >
                 <div className="w-full aspect-video mb-6 overflow-hidden rounded-[8px]">
-                  <img 
-                    src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20bezopasnost.jpg" 
-                    alt="Безопасность продукта" 
-                    className="w-full h-full object-cover"
+                  <img
+                    src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20bezopasnost.jpg"
+                    alt="Безопасность продукта"
+                    className="w-full h-full object-cover object-top"
                   />
                 </div>
                 <div className="flex items-center gap-3 mb-6">
@@ -296,6 +296,99 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                 >
                   🤖 Открыть ботов
                 </button>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* БЛОК 4: ЧТО ДАЁТ ВНЕДРЕНИЕ AI */}
+          <div className="mt-24">
+            <SectionTitle>ЧТО ДАЁТ ВНЕДРЕНИЕ AI</SectionTitle>
+            <p className="font-dm text-[16px] text-[var(--text-secondary)] mb-12">
+              Три результата, которые получает каждый заказчик
+            </p>
+
+            <div className="flex flex-col gap-6 max-w-2xl">
+              {/* Карточка 1 */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="bg-[var(--bg-card)] border-l-4 border-[#F4621F] rounded-[12px] overflow-hidden shadow-sm"
+              >
+                <div className="h-[250px] overflow-hidden">
+                  <img
+                    src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/vnedrenie%201.JPG"
+                    alt="Порядок в процессах"
+                    className="w-full h-full object-cover object-top"
+                  />
+                </div>
+                <div className="p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-[24px]">🤝</span>
+                    <h3 className="font-orbitron text-[20px] font-bold text-[#F4621F]">
+                      Порядок в процессах
+                    </h3>
+                  </div>
+                  <p className="font-dm text-[16px] text-[var(--text-main)] leading-[1.7]">
+                    AI встраивается в существующие процессы компании — финансовый учёт, проектное управление, кадровый документооборот. Система не заменяет людей, а усиливает их: берёт рутину на себя, подсказывает решения и удерживает процессы в норме без ручного контроля.
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Карточка 2 */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="bg-[var(--bg-card)] border-l-4 border-[#F4621F] rounded-[12px] overflow-hidden shadow-sm"
+              >
+                <div className="h-[250px] overflow-hidden">
+                  <img
+                    src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/vnedrenie%202.JPG"
+                    alt="Единая структура предприятия"
+                    className="w-full h-full object-cover object-top"
+                  />
+                </div>
+                <div className="p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-[24px]">⚙️</span>
+                    <h3 className="font-orbitron text-[20px] font-bold text-[#F4621F]">
+                      Единая структура предприятия
+                    </h3>
+                  </div>
+                  <p className="font-dm text-[16px] text-[var(--text-main)] leading-[1.7]">
+                    Каждая задача получает чёткий регламент. Все подразделения работают в единой системе — данные не теряются, зоны ответственности не пересекаются. Хаос превращается в управляемую архитектуру.
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Карточка 3 */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="bg-[var(--bg-card)] border-l-4 border-[#F4621F] rounded-[12px] overflow-hidden shadow-sm"
+              >
+                <div className="h-[250px] overflow-hidden">
+                  <img
+                    src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/vnedrenie%203.JPG"
+                    alt="Скорость и экономия"
+                    className="w-full h-full object-cover object-top"
+                  />
+                </div>
+                <div className="p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-[24px]">📱</span>
+                    <h3 className="font-orbitron text-[20px] font-bold text-[#F4621F]">
+                      Скорость и экономия
+                    </h3>
+                  </div>
+                  <p className="font-dm text-[16px] text-[var(--text-main)] leading-[1.7]">
+                    Автоматизация освобождает сотни часов ручного труда ежемесячно. Система работает быстрее, ошибок меньше, решения принимаются на основе данных. Экономия от внедрения — от нескольких сотен тысяч рублей в год.
+                  </p>
+                </div>
               </motion.div>
             </div>
           </div>
