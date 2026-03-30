@@ -262,8 +262,8 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       </div>
 
       {/* 4.4 ВИДЕО VIBE CODING */}
-      <div className="mt-[96px]">
-        <motion.div 
+      <div className="mt-[96px] video-section">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -284,11 +284,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="relative h-0 overflow-hidden rounded-[12px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] max-w-[640px] mx-auto"
-            style={{ paddingBottom: 'calc(640px * 9 / 16)', maxHeight: '360px', aspectRatio: '16/9' }}
+            className="video-wrapper shadow-[0_8px_32px_rgba(0,0,0,0.12)] max-w-[640px] mx-auto"
           >
             <iframe
-              className="absolute top-0 left-0 w-full h-full"
               src={vkEmbedUrl(VIDEOS.vibeCoding)}
               frameBorder="0"
               allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
