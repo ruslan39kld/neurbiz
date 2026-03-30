@@ -219,7 +219,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                 viewport={{ once: true }}
                 className="bg-[var(--bg-card)] border-l-4 border-[#FF6B35] rounded-[12px] p-8 shadow-sm flex flex-col"
               >
-                <div className="w-full h-[200px] mb-6 overflow-hidden rounded-[8px]">
+                <div className="w-full mb-6 overflow-hidden rounded-[8px]" style={{ aspectRatio: '1 / 1' }}>
                   <img
                     src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20logika.JPG"
                     alt="AI-Логика проекта"
@@ -258,7 +258,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                 transition={{ delay: 0.1 }}
                 className="bg-[var(--bg-card)] border-l-4 border-[#FF6B35] rounded-[12px] p-8 shadow-sm flex flex-col"
               >
-                <div className="w-full h-[200px] mb-6 overflow-hidden rounded-[8px]">
+                <div className="w-full mb-6 overflow-hidden rounded-[8px]" style={{ aspectRatio: '1 / 1' }}>
                   <img
                     src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20bezopasnost.jpg"
                     alt="Безопасность продукта"
