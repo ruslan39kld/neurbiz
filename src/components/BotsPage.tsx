@@ -8,6 +8,7 @@ import { trackEvent } from '../utils/analytics';
 interface Bot {
   id: string;
   icon: string;
+  image: string;
   name: string;
   subtitle: string;
   description: string;
@@ -24,6 +25,7 @@ export default function BotsPage() {
     {
       id: 'consultant',
       icon: '🧠',
+      image: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20bot1.JPG',
       name: 'AI Консультант',
       subtitle: 'по нейросетям и промт-инжинирингу',
       description: 'Знает 30+ нейросетей. Объяснит методологию ПЛК-ФОТ. Поможет выбрать инструмент под задачу.',
@@ -35,6 +37,7 @@ export default function BotsPage() {
     {
       id: 'trainer',
       icon: '🎯',
+      image: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20bot2.JPG',
       name: 'Тренажёр промтов',
       subtitle: 'оценка по методологии ПЛК-ФОТ',
       description: 'Вставь любой промт — получи оценку 0-10 по 6 критериям и улучшенную версию за 10 секунд.',
@@ -111,8 +114,8 @@ export default function BotsPage() {
                   </div>
 
                   {/* Icon */}
-                  <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${bot.gradient} flex items-center justify-center text-[40px] mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                    {bot.icon}
+                  <div className="w-20 h-20 rounded-2xl mb-6 overflow-hidden group-hover:scale-110 transition-transform duration-300" style={{ aspectRatio: '1 / 1' }}>
+                    <img src={bot.image} alt={bot.name} className="w-full h-full object-cover" />
                   </div>
                   
                   <div className="mb-4">
