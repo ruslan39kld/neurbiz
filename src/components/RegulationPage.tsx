@@ -217,39 +217,37 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-[var(--bg-card)] border-l-4 border-[#FF6B35] rounded-[12px] shadow-sm flex flex-col overflow-hidden"
-                style={{ aspectRatio: '1 / 1' }}
+                className="bg-[var(--bg-card)] border-l-4 border-[#FF6B35] rounded-[12px] p-8 shadow-sm flex flex-col"
               >
-                <div className="w-full overflow-hidden shrink-0" style={{ aspectRatio: '1 / 1', maxHeight: '45%' }}>
+                <div className="w-full h-[200px] mb-6 overflow-hidden rounded-[8px]">
                   <img
                     src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20logika.JPG"
                     alt="AI-Логика проекта"
                     className="w-full h-full object-cover object-top"
                   />
                 </div>
-                <div className="flex flex-col flex-1 p-6 overflow-hidden">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[22px]">🧠</span>
-                    <h3 className="font-orbitron text-[17px] font-bold text-[#FF6B35]">
-                      AI-Логика проекта
-                    </h3>
-                  </div>
-                  <div className="font-dm text-[13px] text-[var(--text-main)] leading-[1.6] mb-4 flex-1 overflow-hidden">
-                    <p className="mb-2">Регламент — это не шаблон. Это живая система.</p>
-                    <p className="mb-2">В основе каждого проекта лежат два вопроса:</p>
-                    <ul className="mb-2 space-y-1">
-                      <li className="flex gap-2"><span>→</span><span>Где мы находимся сейчас?</span></li>
-                      <li className="flex gap-2"><span>→</span><span>Куда мы хотим прийти?</span></li>
-                    </ul>
-                    <p>Новые задачи не ломают систему — они встраиваются в логику проекта.</p>
-                  </div>
-                  <button
-                    onClick={() => setActiveTab && setActiveTab('projects')}
-                    className="w-full bg-[#FF6B35] text-white font-bold text-[14px] py-[10px] rounded-[8px] hover:bg-[#e55a1f] hover:shadow-md transition-all duration-200 shrink-0"
-                  >
-                    📁 Посмотреть проекты
-                  </button>
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="text-[24px]">🧠</span>
+                  <h3 className="font-orbitron text-[20px] font-bold text-[#FF6B35]">
+                    AI-Логика проекта
+                  </h3>
                 </div>
+                <div className="font-dm text-[16px] text-[var(--text-main)] leading-[1.7] mb-8 flex-1">
+                  <p className="mb-4">Регламент — это не шаблон. Это живая система.</p>
+                  <p className="mb-4">В основе каждого проекта лежат два вопроса:</p>
+                  <ul className="mb-4 space-y-2">
+                    <li className="flex gap-2"><span>→</span><span>Где мы находимся сейчас?</span></li>
+                    <li className="flex gap-2"><span>→</span><span>Куда мы хотим прийти?</span></li>
+                  </ul>
+                  <p className="mb-4">Всё между этими точками — логика и стратегические шаги. Когда понимаешь вектор движения, маховик начинает раскручиваться сам: гибкое ТЗ → итерационная разработка → масштабирование.</p>
+                  <p>Новые задачи не ломают систему — они встраиваются в логику проекта. Для старта первого прототипа можно взять любой действующий проект как фундамент — изменив логику и подход под новую задачу.</p>
+                </div>
+                <button
+                  onClick={() => setActiveTab && setActiveTab('projects')}
+                  className="w-full bg-[#FF6B35] text-white font-bold text-[15px] py-[14px] rounded-[8px] hover:bg-[#e55a1f] hover:shadow-md transition-all duration-200"
+                >
+                  📁 Посмотреть проекты
+                </button>
               </motion.div>
 
               {/* Карточка 2 */}
@@ -258,39 +256,44 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="bg-[var(--bg-card)] border-l-4 border-[#FF6B35] rounded-[12px] shadow-sm flex flex-col overflow-hidden"
-                style={{ aspectRatio: '1 / 1' }}
+                className="bg-[var(--bg-card)] border-l-4 border-[#FF6B35] rounded-[12px] p-8 shadow-sm flex flex-col"
               >
-                <div className="w-full overflow-hidden shrink-0" style={{ aspectRatio: '1 / 1', maxHeight: '45%' }}>
+                <div className="w-full h-[200px] mb-6 overflow-hidden rounded-[8px]">
                   <img
                     src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20bezopasnost.jpg"
                     alt="Безопасность продукта"
                     className="w-full h-full object-cover object-top"
                   />
                 </div>
-                <div className="flex flex-col flex-1 p-6 overflow-hidden">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[22px]">🛡️</span>
-                    <h3 className="font-orbitron text-[17px] font-bold text-[#FF6B35]">
-                      Безопасность продукта
-                    </h3>
-                  </div>
-                  <div className="font-dm text-[13px] text-[var(--text-main)] leading-[1.6] mb-4 flex-1 overflow-hidden">
-                    <p className="mb-2">Готовый продукт безопасно использовать, развивать и масштабировать.</p>
-                    <p className="mb-2">🔑 Ключевой принцип — суверенитет данных. Подключаюсь исключительно к:</p>
-                    <ul className="mb-2 space-y-1">
-                      <li className="flex gap-2"><span>✅</span><span>GigaChat API — российская разработка (Сбер)</span></li>
-                      <li className="flex gap-2"><span>✅</span><span>Amvera — российская платформа деплоя</span></li>
-                      <li className="flex gap-2"><span>✅</span><span>Серверы предприятия — корпоративные заказчики</span></li>
-                    </ul>
-                  </div>
-                  <button
-                    onClick={() => setActiveTab && setActiveTab('bots')}
-                    className="w-full bg-[#FF6B35] text-white font-bold text-[14px] py-[10px] rounded-[8px] hover:bg-[#e55a1f] hover:shadow-md transition-all duration-200 shrink-0"
-                  >
-                    🤖 Открыть ботов
-                  </button>
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="text-[24px]">🛡️</span>
+                  <h3 className="font-orbitron text-[20px] font-bold text-[#FF6B35]">
+                    Безопасность продукта
+                  </h3>
                 </div>
+                <div className="font-dm text-[16px] text-[var(--text-main)] leading-[1.7] mb-8 flex-1">
+                  <p className="mb-4">Готовый продукт безопасно использовать, развивать и масштабировать.</p>
+                  <p className="mb-4">При разработке по методологии VIBE CODING + FRONTIER DEPLOYMENT ENGINEER финальный продукт работает как стабильное «железо» — нейросети пишут код, который функционирует локально и предсказуемо.</p>
+                  <p className="mb-4">🔑 Ключевой принцип — суверенитет данных:<br/>API — это «мост» между системами. Именно через него данные могут покидать периметр. Поэтому я подключаюсь исключительно к:</p>
+                  <ul className="mb-4 space-y-2">
+                    <li className="flex gap-2"><span>✅</span><span>GigaChat API — российская разработка (Сбер)</span></li>
+                    <li className="flex gap-2"><span>✅</span><span>Amvera — российская платформа деплоя</span></li>
+                    <li className="flex gap-2"><span>✅</span><span>Серверы предприятия — при работе с корпоративными заказчиками</span></li>
+                  </ul>
+                  <p>Все разработки для ЕАСУЗ и Центра оповещения созданы в государственном контуре, где безопасность — требование первого уровня. Каждый файл кода прошёл проверку и получил подтверждение соответствия требованиям ИБ.</p>
+
+                  <div className="mt-6 pt-6 border-t border-[var(--border)]">
+                    <p className="text-[14px] italic text-[var(--text-secondary)]">
+                      Остались вопросы по безопасности нейросетей или корректному использованию AI-инструментов? Проверьте ваш запрос перед тем, как задавать его — это повысит точность ответа.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setActiveTab && setActiveTab('bots')}
+                  className="w-full bg-[#FF6B35] text-white font-bold text-[15px] py-[14px] rounded-[8px] hover:bg-[#e55a1f] hover:shadow-md transition-all duration-200"
+                >
+                  🤖 Открыть ботов
+                </button>
               </motion.div>
             </div>
           </div>
