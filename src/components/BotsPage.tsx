@@ -87,8 +87,16 @@ export default function BotsPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: i * 0.1 }}
-                  className="bg-[var(--bg-card)] border border-[var(--border)] rounded-[32px] p-8 flex flex-col group hover:border-[#FF6B2B]/40 hover:-translate-y-2 transition-all duration-300 shadow-lg hover:shadow-[#FF6B2B]/5 relative overflow-hidden"
+                  className="bg-[var(--bg-card)] border border-[var(--border)] rounded-[32px] flex flex-col group hover:border-[#FF6B2B]/40 hover:-translate-y-2 transition-all duration-300 shadow-lg hover:shadow-[#FF6B2B]/5 relative overflow-hidden"
                 >
+                  {/* Full-width square image at top */}
+                  <div className="w-full overflow-hidden rounded-t-[32px]" style={{ aspectRatio: '1 / 1' }}>
+                    <img src={bot.image} alt={bot.name} className="w-full h-full object-cover object-center" />
+                  </div>
+
+                  {/* Card content */}
+                  <div className="p-8 flex flex-col flex-1">
+
                   {/* Pulsing Badge */}
                   <div className="absolute top-6 right-6 flex items-center gap-2">
                     {isActive ? (
@@ -113,11 +121,6 @@ export default function BotsPage() {
                     )}
                   </div>
 
-                  {/* Icon */}
-                  <div className="w-20 h-20 rounded-2xl mb-6 overflow-hidden group-hover:scale-110 transition-transform duration-300" style={{ aspectRatio: '1 / 1' }}>
-                    <img src={bot.image} alt={bot.name} className="w-full h-full object-cover" />
-                  </div>
-                  
                   <div className="mb-4">
                     <h3 className="font-orbitron text-[22px] font-bold text-[var(--text-main)] leading-tight">
                       {bot.name}
@@ -149,6 +152,7 @@ export default function BotsPage() {
                   >
                     {bot.mode === 'consultant' ? '💬 Открыть чат' : '🎯 Открыть тренажёр'}
                   </button>
+                  </div>
                 </motion.div>
                 );
               })}
