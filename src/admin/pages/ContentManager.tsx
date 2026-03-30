@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Plus, Edit2, Trash2, X, Save, RefreshCw } from 'lucide-react';
 import { certificates as defaultCertificates, projects as defaultProjects } from '../../data';
 
@@ -920,20 +921,27 @@ function RegulationForm({ initialData, onSave }: { initialData: any, onSave: (da
 }
 
 function Modal({ title, onClose, children }: { title: string, onClose: () => void, children: React.ReactNode }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-[var(--bg-card)] rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-[var(--border)]">
-        <div className="flex justify-between items-center p-4 border-b border-[var(--border)]">
-          <h3 className="text-lg font-bold text-[var(--text-main)]">{title}</h3>
-          <button onClick={onClose} className="text-[var(--text-secondary)] hover:text-[var(--text-main)]">
+  return createPortal(
+    <div
+      style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', background: 'rgba(0,0,0,0.5)' }}
+      onClick={onClose}
+    >
+      <div
+        style={{ position: 'relative', width: '100%', maxWidth: '32rem', background: 'var(--bg-card)', borderRadius: '12px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', overflow: 'hidden', border: '1px solid var(--border)' }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderBottom: '1px solid var(--border)' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--text-main)', margin: 0 }}>{title}</h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', padding: '4px' }}>
             <X size={20} />
           </button>
         </div>
-        <div className="p-4">
+        <div style={{ padding: '16px' }}>
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
