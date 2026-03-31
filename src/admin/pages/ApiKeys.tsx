@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getSupabaseClient } from '../../services/supabaseClient';
 
 interface KeyState {
   value: string;
@@ -18,7 +19,7 @@ const ApiKeys: React.FC = () => {
   const [savedDates, setSavedDates] = useState<Record<string, string>>({});
   const [toast, setToast] = useState('');
 
-  useEffect(() => {
+  const loadFromLocalStorage = () => {
     const load = (k: string, noEncrypt?: boolean) => {
       const v = localStorage.getItem(noEncrypt ? k : `apikey_${k}`);
       if (!v) return '';
@@ -39,6 +40,69 @@ const ApiKeys: React.FC = () => {
       claude: localStorage.getItem('apikey_claude_date') || '',
       telegram: localStorage.getItem('apikey_telegram_date') || '',
     });
+  };
+
+  useEffect(() => {
+    // First load from localStorage (bootstrap)
+    loadFromLocalStorage();
+
+    // Then try to load from Supabase and override
+    const loadFromSupabase = async () => {
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
+      const { data, error } = await supabase
+        .from('api_keys')
+        .select('key_name, key_value, updated_at');
+      if (error || !data) return;
+
+      const map: Record<string, { value: string; date: string }> = {};
+      for (const row of data) {
+        map[row.key_name] = {
+          value: row.key_value || '',
+          date: row.updated_at ? new Date(row.updated_at).toLocaleString('ru') : '',
+        };
+      }
+
+      setKeys(prev => {
+        const next = { ...prev };
+        const keyMap: Record<string, string> = {
+          supabase_url: 'supabase_url',
+          supabase_anon: 'supabase_anon',
+          gigachat: 'gigachat',
+          claude: 'claude',
+          telegram: 'telegram',
+        };
+        for (const [stateKey, supabaseKey] of Object.entries(keyMap)) {
+          if (map[supabaseKey] !== undefined && map[supabaseKey].value) {
+            next[stateKey] = {
+              ...prev[stateKey],
+              value: map[supabaseKey].value,
+              inputValue: map[supabaseKey].value,
+            };
+          }
+        }
+        return next;
+      });
+
+      setSavedDates(prev => {
+        const next = { ...prev };
+        const keyMap: Record<string, string> = {
+          supabase_url: 'supabase_url',
+          supabase_anon: 'supabase_anon',
+          gigachat: 'gigachat',
+          claude: 'claude',
+          telegram: 'telegram',
+        };
+        for (const [stateKey, supabaseKey] of Object.entries(keyMap)) {
+          if (map[supabaseKey]?.date) {
+            next[stateKey] = map[supabaseKey].date;
+          }
+        }
+        return next;
+      });
+    };
+
+    loadFromSupabase();
   }, []);
 
   const startEdit = (k: string) => {
@@ -55,13 +119,28 @@ const ApiKeys: React.FC = () => {
     }));
   };
 
-  const saveKey = (k: string, noEncrypt?: boolean) => {
+  const saveKey = async (k: string, noEncrypt?: boolean) => {
     const newVal = keys[k].inputValue.trim();
     if (!newVal) return;
+
+    // Save to localStorage (bootstrap / fallback)
     const storageKey = noEncrypt ? k : `apikey_${k}`;
     localStorage.setItem(storageKey, noEncrypt ? newVal : btoa(newVal));
     const now = new Date().toLocaleString('ru');
     localStorage.setItem(`${storageKey}_date`, now);
+
+    // Save to Supabase api_keys table
+    const supabaseKeyName = k; // key names match: supabase_url, supabase_anon, gigachat, claude, telegram
+    const supabase = getSupabaseClient();
+    if (supabase) {
+      await supabase
+        .from('api_keys')
+        .upsert(
+          { key_name: supabaseKeyName, key_value: newVal, updated_at: new Date().toISOString() },
+          { onConflict: 'key_name' }
+        );
+    }
+
     setKeys(prev => ({
       ...prev,
       [k]: { ...prev[k], value: newVal, editing: false }
@@ -78,10 +157,21 @@ const ApiKeys: React.FC = () => {
     }));
   };
 
-  const deleteKey = (k: string, noEncrypt?: boolean) => {
+  const deleteKey = async (k: string, noEncrypt?: boolean) => {
+    // Remove from localStorage
     const storageKey = noEncrypt ? k : `apikey_${k}`;
     localStorage.removeItem(storageKey);
     localStorage.removeItem(`${storageKey}_date`);
+
+    // Remove from Supabase
+    const supabase = getSupabaseClient();
+    if (supabase) {
+      await supabase
+        .from('api_keys')
+        .update({ key_value: null, updated_at: new Date().toISOString() })
+        .eq('key_name', k);
+    }
+
     setKeys(prev => ({
       ...prev,
       [k]: { ...prev[k], value: '', inputValue: '', editing: false }
@@ -204,7 +294,7 @@ const ApiKeys: React.FC = () => {
           🔒 Безопасное хранение
         </div>
         <div style={{ color: '#15803D', fontSize: '13px' }}>
-          Ключи хранятся только в вашем браузере (localStorage) в зашифрованном виде (Base64) и никогда не передаются на сервер.
+          Ключи сохраняются в Supabase (таблица api_keys) и дублируются в localStorage браузера для быстрого доступа.
         </div>
       </div>
 
@@ -244,7 +334,7 @@ const ApiKeys: React.FC = () => {
                   letterSpacing: hasValue ? '2px' : 'normal'
                 }}>
                   {hasValue
-                    ? (k.visible 
+                    ? (k.visible
                         ? k.value.substring(0, 8) + '...' + k.value.substring(k.value.length - 4)
                         : '●'.repeat(32))
                     : 'Ключ не установлен'
