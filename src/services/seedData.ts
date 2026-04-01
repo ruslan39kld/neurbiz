@@ -13,8 +13,23 @@ export async function seedIfEmpty(): Promise<void> {
       .limit(1);
 
     if (!existing || existing.length === 0) {
-      const projectsToInsert = defaultProjects.map(({ id: _id, ...rest }, i) => ({
-        ...rest,
+      const projectsToInsert = defaultProjects.map((p, i) => ({
+        title: p.title,
+        icon: p.icon,
+        category: p.category,
+        stage: p.stage,
+        year: p.year,
+        description: p.description,
+        detail: p.detail,
+        result: p.result,
+        role: p.role,
+        tags: p.tags,
+        tasks: [],
+        stats: p.stats,
+        imageUrl: p.imageUrl,
+        videoUrl: p.videoUrl,
+        liveUrl: p.liveUrl,
+        demo_url: p.demo_url,
         sort_order: i,
       }));
       const { error } = await supabase.from('projects').insert(projectsToInsert);
@@ -33,8 +48,13 @@ export async function seedIfEmpty(): Promise<void> {
       .limit(1);
 
     if (!existing || existing.length === 0) {
-      const certsToInsert = defaultCertificates.map(({ id: _id, ...rest }, i) => ({
-        ...rest,
+      const certsToInsert = defaultCertificates.map((c, i) => ({
+        title: c.title,
+        org: c.org,
+        year: c.year,
+        category: c.category,
+        cert_url: c.cert_url,
+        image: c.image,
         sort_order: i,
       }));
       const { error } = await supabase.from('certificates').insert(certsToInsert);
