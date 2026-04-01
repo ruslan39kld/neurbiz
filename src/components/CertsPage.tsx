@@ -18,7 +18,7 @@ export default function CertsPage() {
   useEffect(() => {
     const loadCertificates = async () => {
       // Try Supabase first
-      const supabase = getSupabaseClient();
+      const supabase = await getSupabaseClient();
       if (supabase) {
         const { data, error } = await supabase
           .from('certificates')

@@ -36,10 +36,18 @@ app.use(express.json());
 
 app.use((_req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, x-gigachat-auth-key');
   if (_req.method === 'OPTIONS') return res.sendStatus(200);
   next();
+});
+
+// GET /api/config — публичные настройки для фронтенда (Supabase credentials)
+app.get('/api/config', (_req, res) => {
+  res.json({
+    supabase_url: process.env.SUPABASE_URL || '',
+    supabase_anon_key: process.env.SUPABASE_ANON_KEY || '',
+  });
 });
 
 const agent = new https.Agent({ rejectUnauthorized: false });

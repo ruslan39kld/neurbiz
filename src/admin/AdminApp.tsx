@@ -5,7 +5,6 @@ import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import ContentManager from './pages/ContentManager';
 import BotsSettings from './pages/BotsSettings';
-import ApiKeys from './pages/ApiKeys';
 import Security from './pages/Security';
 import AdminSidebar from './components/AdminSidebar';
 
@@ -57,7 +56,6 @@ export default function AdminApp() {
           <Route path="/admin/analytics" element={<Analytics />} />
           <Route path="/admin/content" element={<ContentManager />} />
           <Route path="/admin/bots" element={<BotsSettings />} />
-          <Route path="/admin/api-keys" element={<ApiKeys />} />
           <Route path="/admin/security" element={<Security />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>

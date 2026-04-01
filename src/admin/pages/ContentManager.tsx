@@ -93,7 +93,7 @@ function CertificatesManager() {
 
   const loadCertificates = async () => {
     setIsLoading(true);
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (supabase) {
       const { data, error } = await supabase
         .from('certificates')
@@ -124,7 +124,7 @@ function CertificatesManager() {
       showNotification('Введите название сертификата', 'error');
       return;
     }
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (supabase) {
       if (editingItem) {
         const { error } = await supabase.from('certificates').update(item).eq('id', item.id);
@@ -154,7 +154,7 @@ function CertificatesManager() {
 
   const confirmDelete = async () => {
     if (!deleteId) return;
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (supabase) {
       const { error } = await supabase.from('certificates').delete().eq('id', deleteId);
       if (error) { showNotification('Ошибка удаления: ' + error.message, 'error'); setDeleteId(null); return; }
@@ -173,7 +173,7 @@ function CertificatesManager() {
   const handleReset = () => { setIsResetting(true); };
 
   const confirmReset = async () => {
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (supabase) {
       const ids = certificates.map(c => c.id);
       if (ids.length > 0) {
@@ -329,7 +329,7 @@ function ProjectsManager() {
 
   const loadProjects = async () => {
     setIsLoading(true);
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (supabase) {
       const { data, error } = await supabase
         .from('projects')
@@ -364,7 +364,7 @@ function ProjectsManager() {
       showNotification('Введите описание проекта', 'error');
       return;
     }
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (supabase) {
       if (editingItem) {
         const { error } = await supabase.from('projects').update(item).eq('id', item.id);
@@ -394,7 +394,7 @@ function ProjectsManager() {
 
   const confirmDelete = async () => {
     if (!deleteId) return;
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (supabase) {
       const { error } = await supabase.from('projects').delete().eq('id', deleteId);
       if (error) { showNotification('Ошибка удаления: ' + error.message, 'error'); setDeleteId(null); return; }
@@ -413,7 +413,7 @@ function ProjectsManager() {
   const handleReset = () => { setIsResetting(true); };
 
   const confirmReset = async () => {
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (supabase) {
       const ids = projects.map(p => p.id);
       if (ids.length > 0) {
