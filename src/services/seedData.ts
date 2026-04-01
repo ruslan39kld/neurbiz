@@ -2,17 +2,20 @@ import { projects as defaultProjects, certificates as defaultCertificates } from
 import { getSupabaseClient } from './supabaseClient';
 
 export async function seedIfEmpty(): Promise<void> {
+  // Skip if already seeded in this browser
+  if (localStorage.getItem('supabase_seeded_v2') === 'true') return;
+
   const supabase = await getSupabaseClient();
   if (!supabase) return;
 
-  // Seed projects if table is empty
   try {
-    const { data: existing } = await supabase
+    // Seed projects if table is empty
+    const { data: existingProjects } = await supabase
       .from('projects')
       .select('id')
       .limit(1);
 
-    if (!existing || existing.length === 0) {
+    if (!existingProjects || existingProjects.length === 0) {
       const projectsToInsert = defaultProjects.map((p, i) => ({
         title: p.title,
         icon: p.icon,
@@ -36,18 +39,14 @@ export async function seedIfEmpty(): Promise<void> {
       if (error) console.warn('Seed projects error:', error.message);
       else console.log('Projects seeded to Supabase');
     }
-  } catch (e) {
-    console.warn('Seed projects failed:', e);
-  }
 
-  // Seed certificates if table is empty
-  try {
-    const { data: existing } = await supabase
+    // Seed certificates if table is empty
+    const { data: existingCerts } = await supabase
       .from('certificates')
       .select('id')
       .limit(1);
 
-    if (!existing || existing.length === 0) {
+    if (!existingCerts || existingCerts.length === 0) {
       const certsToInsert = defaultCertificates.map((c, i) => ({
         title: c.title,
         org: c.org,
@@ -61,7 +60,10 @@ export async function seedIfEmpty(): Promise<void> {
       if (error) console.warn('Seed certificates error:', error.message);
       else console.log('Certificates seeded to Supabase');
     }
+
+    // Mark seed as done so we skip on next page load
+    localStorage.setItem('supabase_seeded_v2', 'true');
   } catch (e) {
-    console.warn('Seed certificates failed:', e);
+    console.warn('Seed error:', e);
   }
 }

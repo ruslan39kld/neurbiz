@@ -14,7 +14,19 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
 
   useEffect(() => {
     const loadProjects = async () => {
-      // Try Supabase first
+      // Check sessionStorage cache first (avoids re-fetching on tab switches)
+      const cached = sessionStorage.getItem('cache_projects');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setProjectsData(parsed);
+            return;
+          }
+        } catch {}
+      }
+
+      // Try Supabase
       const supabase = await getSupabaseClient();
       if (supabase) {
         const { data, error } = await supabase
@@ -35,6 +47,7 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
             return savedItem;
           });
           setProjectsData(merged);
+          sessionStorage.setItem('cache_projects', JSON.stringify(merged));
           return;
         }
       }
