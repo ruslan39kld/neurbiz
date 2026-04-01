@@ -17,7 +17,19 @@ export default function CertsPage() {
 
   useEffect(() => {
     const loadCertificates = async () => {
-      // Try Supabase first
+      // Check sessionStorage cache first (avoids re-fetching on tab switches)
+      const cached = sessionStorage.getItem('cache_certificates');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setCertificates(parsed);
+            return;
+          }
+        } catch {}
+      }
+
+      // Try Supabase
       const supabase = await getSupabaseClient();
       if (supabase) {
         const { data, error } = await supabase
@@ -26,6 +38,7 @@ export default function CertsPage() {
           .order('year', { ascending: false });
         if (!error && data && data.length > 0) {
           setCertificates(data);
+          sessionStorage.setItem('cache_certificates', JSON.stringify(data));
           return;
         }
       }
