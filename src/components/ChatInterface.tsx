@@ -62,31 +62,15 @@ export default function ChatInterface({ botType, onClose }: ChatInterfaceProps) 
     }
   };
 
-  const getApiKeyForChat = (): string => {
-    const variants = ['apikey_gigachat', 'api_key_gigachat', 'api_key_claude', 'api_key_anthropic', 'apikey_claude'];
-    for (const key of variants) {
-      const saved = localStorage.getItem(key);
-      if (saved) {
-        try { return atob(saved); } catch { return saved; }
-      }
-    }
-    return '';
-  };
-
   useEffect(() => {
-    const apiKey = getApiKeyForChat();
     const welcomeText = botType === 'consultant'
       ? 'Привет! Я AI Консультант по нейросетям и промт-инжинирингу. Помогу выбрать нужный инструмент, объясню методологии и отвечу на вопросы об ИИ. Что интересует?'
       : 'Привет! Я Тренажёр промптов. Отправь мне любой промпт — проанализирую по методологии ПЛК-ФОТ, дам оценку 1-10 и предложу улучшенную версию!';
-      
-    const statusText = apiKey 
-      ? '' 
-      : '\n\n⚙️ Для работы бота зайдите в Admin Panel → API Ключи → добавьте GigaChat API Key или Claude API Key';
-      
+
     setMessages([
       {
         id: Date.now(),
-        text: welcomeText + statusText,
+        text: welcomeText,
         sender: 'bot',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }

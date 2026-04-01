@@ -36,13 +36,6 @@ const getClaudeKey = (): string => {
   return '';
 };
 
-// Читаем GigaChat ключ из localStorage
-const getGigaChatAuthKey = (): string => {
-  const raw = localStorage.getItem('apikey_gigachat') || '';
-  if (!raw) return '';
-  try { return atob(raw); } catch { return raw; }
-};
-
 // Вызов GigaChat через прокси-сервер
 const callGigaChat = async (
   system: string,
@@ -59,15 +52,12 @@ const callGigaChat = async (
     { role: 'user', content: userContent }
   ];
 
-  const gigaChatKey = getGigaChatAuthKey();
-
   try {
-    // Токен получается и кешируется на прокси-сервере
+    // Токен получается и кешируется на прокси-сервере (ключ берётся из env на сервере)
     const chatRes = await fetch('/api/gigachat/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(gigaChatKey && { 'x-gigachat-auth-key': gigaChatKey }),
       },
       body: JSON.stringify({
         model: 'GigaChat',
