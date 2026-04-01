@@ -15,7 +15,7 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
   useEffect(() => {
     const loadProjects = async () => {
       // Try Supabase first
-      const supabase = getSupabaseClient();
+      const supabase = await getSupabaseClient();
       if (supabase) {
         const { data, error } = await supabase
           .from('projects')

@@ -48,7 +48,7 @@ const ApiKeys: React.FC = () => {
 
     // Then try to load from Supabase and override
     const loadFromSupabase = async () => {
-      const supabase = getSupabaseClient();
+      const supabase = await getSupabaseClient();
       if (!supabase) return;
       const { data, error } = await supabase
         .from('api_keys')
@@ -131,7 +131,7 @@ const ApiKeys: React.FC = () => {
 
     // Save to Supabase api_keys table
     const supabaseKeyName = k; // key names match: supabase_url, supabase_anon, gigachat, claude, telegram
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (supabase) {
       await supabase
         .from('api_keys')
@@ -164,7 +164,7 @@ const ApiKeys: React.FC = () => {
     localStorage.removeItem(`${storageKey}_date`);
 
     // Remove from Supabase
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (supabase) {
       await supabase
         .from('api_keys')

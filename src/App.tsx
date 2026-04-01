@@ -16,15 +16,9 @@ import ContactsPage from './components/ContactsPage';
 import BotsPage from './components/BotsPage';
 import AdminApp from './admin/AdminApp';
 import { trackEvent } from './utils/analytics';
-import { projects, certificates } from './data';
+import { seedIfEmpty } from './services/seedData';
 
 const initializeLocalStorage = () => {
-  if (!localStorage.getItem('portfolio_projects')) {
-    localStorage.setItem('portfolio_projects', JSON.stringify(projects));
-  }
-  if (!localStorage.getItem('portfolio_certificates')) {
-    localStorage.setItem('portfolio_certificates', JSON.stringify(certificates));
-  }
   if (!localStorage.getItem('portfolio_reviews')) {
     localStorage.setItem('portfolio_reviews', JSON.stringify([
       {
@@ -59,6 +53,7 @@ export default function App() {
 
   useEffect(() => {
     initializeLocalStorage();
+    seedIfEmpty(); // Seed Supabase with default data if tables are empty
     // Check for active admin session and redirect if on main site
     if (!isAdminRoute) {
       const isAuth = localStorage.getItem('admin_auth') === 'true' || sessionStorage.getItem('admin_auth') === 'true';
