@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { LayoutDashboard, BarChart2, Bot, Key, Shield, LogOut, Menu, X, FileEdit } from 'lucide-react';
+import { LayoutDashboard, BarChart2, Bot, Shield, LogOut, Menu, X, FileEdit } from 'lucide-react';
 
 interface AdminSidebarProps {
   onLogout: () => void;
@@ -16,7 +16,6 @@ export default function AdminSidebar({ onLogout, currentPath, isOpen, setIsOpen 
     { path: '/admin/analytics', label: 'Аналитика страниц', icon: <BarChart2 size={20} /> },
     { path: '/admin/content', label: 'Контент', icon: <FileEdit size={20} /> },
     { path: '/admin/bots', label: 'Настройки ботов', icon: <Bot size={20} /> },
-    { path: '/admin/api-keys', label: 'API Ключи', icon: <Key size={20} /> },
     { path: '/admin/security', label: 'Безопасность', icon: <Shield size={20} /> },
   ];
 

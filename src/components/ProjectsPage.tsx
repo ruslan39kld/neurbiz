@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { projects as defaultProjects, vkEmbedUrl } from '../data';
+import { getSupabaseClient } from '../services/supabaseClient';
 
 import SectionTitle from './SectionTitle';
 
@@ -9,13 +10,33 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [photoModal, setPhotoModal] = useState<string | null>(null);
-  const [projectsData, setProjectsData] = useState<any[]>(() => {
-    try {
-      const stored = localStorage.getItem('portfolio_projects');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          const merged = parsed.map((savedItem: any) => {
+  const [projectsData, setProjectsData] = useState<any[]>(defaultProjects);
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      // Check sessionStorage cache first (avoids re-fetching on tab switches)
+      const cached = sessionStorage.getItem('cache_projects');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setProjectsData(parsed);
+            return;
+          }
+        } catch {}
+      }
+
+      // Try Supabase
+      const supabase = await getSupabaseClient();
+      if (supabase) {
+        const { data, error } = await supabase
+          .from('projects')
+          .select('*')
+          .order('year', { ascending: false })
+          .order('created_at', { ascending: false });
+        if (!error && data && data.length > 0) {
+          // Merge with defaultProjects to fill in any missing rich fields (imageUrl, videoUrl, etc.)
+          const merged = data.map((savedItem: any) => {
             const def = defaultProjects.find(d => d.title === savedItem.title);
             if (def) {
               const mergedItem = { ...def, ...savedItem };
@@ -26,44 +47,15 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
             }
             return savedItem;
           });
-          return merged;
+          setProjectsData(merged);
+          sessionStorage.setItem('cache_projects', JSON.stringify(merged));
+          return;
         }
       }
-    } catch (e) {}
-    return defaultProjects;
-  });
+      // Fallback: src/data.ts (defaultProjects already set as initial state)
+    };
 
-  useEffect(() => {
-    const handleStorageChange = () => {
-      try {
-        const stored = localStorage.getItem('portfolio_projects');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed)) {
-            const merged = parsed.map((savedItem: any) => {
-              const def = defaultProjects.find(d => d.title === savedItem.title);
-              if (def) {
-                const mergedItem = { ...def, ...savedItem };
-                if (!savedItem.imageUrl) mergedItem.imageUrl = def.imageUrl;
-                if (!savedItem.videoUrl) mergedItem.videoUrl = def.videoUrl;
-                if (!savedItem.liveUrl) mergedItem.liveUrl = def.liveUrl;
-                return mergedItem;
-              }
-              return savedItem;
-            });
-            setProjectsData(merged);
-          }
-        }
-      } catch (e) {}
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('focus', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('focus', handleStorageChange);
-    };
+    loadProjects();
   }, []);
 
   useEffect(() => {

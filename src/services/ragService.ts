@@ -1,7 +1,7 @@
 import { getSupabaseClient } from './supabaseClient';
 
 export const searchKnowledge = async (query: string): Promise<string> => {
-  const supabase = getSupabaseClient();
+  const supabase = await getSupabaseClient();
   if (!supabase) return '';
 
   try {

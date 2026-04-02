@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import QuickPinchZoom, { make3dTransformValue } from 'react-quick-pinch-zoom';
 import { certificates as defaultCertificates } from '../data';
+import { getSupabaseClient } from '../services/supabaseClient';
 import Modal from './Modal';
 import SectionTitle from './SectionTitle';
 
@@ -12,35 +13,40 @@ export default function CertsPage() {
   const [imgOrientation, setImgOrientation] = useState<'portrait' | 'landscape' | null>(null);
   const [previewErrors, setPreviewErrors] = useState<Record<number, boolean>>({});
   const imgRef = useRef<HTMLImageElement>(null);
-  const [certificates, setCertificates] = useState<any[]>(() => {
-    try {
-      const stored = localStorage.getItem('portfolio_certificates');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) return parsed;
-      }
-    } catch (e) {}
-    return defaultCertificates;
-  });
+  const [certificates, setCertificates] = useState<any[]>(defaultCertificates);
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      try {
-        const stored = localStorage.getItem('portfolio_certificates');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed)) setCertificates(parsed);
+    const loadCertificates = async () => {
+      // Check sessionStorage cache first (avoids re-fetching on tab switches)
+      const cached = sessionStorage.getItem('cache_certificates');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setCertificates(parsed);
+            return;
+          }
+        } catch {}
+      }
+
+      // Try Supabase
+      const supabase = await getSupabaseClient();
+      if (supabase) {
+        const { data, error } = await supabase
+          .from('certificates')
+          .select('*')
+          .order('year', { ascending: false })
+          .order('created_at', { ascending: false });
+        if (!error && data && data.length > 0) {
+          setCertificates(data);
+          sessionStorage.setItem('cache_certificates', JSON.stringify(data));
+          return;
         }
-      } catch (e) {}
+      }
+      // Fallback: src/data.ts (defaultCertificates already set as initial state)
     };
-    
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('focus', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('focus', handleStorageChange);
-    };
+
+    loadCertificates();
   }, []);
 
   const onUpdate = useCallback(({ x, y, scale }: { x: number; y: number; scale: number }) => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Plus, Edit2, Trash2, X, Save, RefreshCw } from 'lucide-react';
 import { certificates as defaultCertificates, projects as defaultProjects } from '../../data';
+import { getSupabaseClient } from '../../services/supabaseClient';
 
 function showNotification(message: string, type: 'success' | 'error' | 'info' = 'success') {
   const toast = document.createElement('div');
@@ -84,70 +85,109 @@ export default function ContentManager() {
 
 function CertificatesManager() {
   const [certificates, setCertificates] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
 
-  useEffect(() => {
+  const loadCertificates = async () => {
+    setIsLoading(true);
+    const supabase = await getSupabaseClient();
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('certificates')
+        .select('*')
+        .order('year', { ascending: false })
+        .order('created_at', { ascending: false });
+      if (!error && data && data.length > 0) {
+        setCertificates(data);
+        setIsLoading(false);
+        return;
+      }
+    }
+    // Fallback: localStorage then defaultCertificates
     const saved = localStorage.getItem('portfolio_certificates');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          setCertificates(parsed);
-        } else {
-          setCertificates(defaultCertificates);
-        }
-      } catch (e) {
-        setCertificates(defaultCertificates);
-      }
-    } else {
-      setCertificates(defaultCertificates);
+        if (Array.isArray(parsed)) { setCertificates(parsed); setIsLoading(false); return; }
+      } catch {}
     }
-  }, []);
+    setCertificates(defaultCertificates);
+    setIsLoading(false);
+  };
 
-  const handleSave = (item: any) => {
+  useEffect(() => { loadCertificates(); }, []);
+
+  const handleSave = async (item: any) => {
     if (!item.title?.trim()) {
       showNotification('Введите название сертификата', 'error');
       return;
     }
-
-    let newItems;
-    if (editingItem) {
-      newItems = certificates.map(i => i.id === item.id ? item : i);
+    const supabase = await getSupabaseClient();
+    if (supabase) {
+      if (editingItem) {
+        const { error } = await supabase.from('certificates').update(item).eq('id', item.id);
+        if (error) { showNotification('Ошибка сохранения: ' + error.message, 'error'); return; }
+      } else {
+        const { id: _id, ...itemWithoutId } = item;
+        const { error } = await supabase.from('certificates').insert(itemWithoutId);
+        if (error) { showNotification('Ошибка добавления: ' + error.message, 'error'); return; }
+      }
+      await loadCertificates();
     } else {
-      newItems = [{ ...item, id: Date.now().toString() }, ...certificates];
+      let newItems;
+      if (editingItem) {
+        newItems = certificates.map(i => i.id === item.id ? item : i);
+      } else {
+        newItems = [{ ...item, id: Date.now().toString() }, ...certificates];
+      }
+      setCertificates(newItems);
+      localStorage.setItem('portfolio_certificates', JSON.stringify(newItems));
     }
-    setCertificates(newItems);
-    localStorage.setItem('portfolio_certificates', JSON.stringify(newItems));
     setIsModalOpen(false);
     setEditingItem(null);
+    sessionStorage.removeItem('cache_certificates');
     showNotification('✅ Сертификат сохранён!', 'success');
   };
 
-  const handleDeleteCertificate = (id: string) => {
-    setDeleteId(id);
-  };
+  const handleDeleteCertificate = (id: string) => { setDeleteId(id); };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!deleteId) return;
-    setCertificates(prev => {
-      const updated = prev.filter(item => item.id !== deleteId);
-      localStorage.setItem('portfolio_certificates', JSON.stringify(updated));
-      return updated;
-    });
+    const supabase = await getSupabaseClient();
+    if (supabase) {
+      const { error } = await supabase.from('certificates').delete().eq('id', deleteId);
+      if (error) { showNotification('Ошибка удаления: ' + error.message, 'error'); setDeleteId(null); return; }
+      await loadCertificates();
+    } else {
+      setCertificates(prev => {
+        const updated = prev.filter(item => item.id !== deleteId);
+        localStorage.setItem('portfolio_certificates', JSON.stringify(updated));
+        return updated;
+      });
+    }
     showNotification('🗑️ Сертификат удалён', 'info');
     setDeleteId(null);
   };
 
-  const handleReset = () => {
-    setIsResetting(true);
-  };
+  const handleReset = () => { setIsResetting(true); };
 
-  const confirmReset = () => {
-    localStorage.removeItem('portfolio_certificates');
-    setCertificates(defaultCertificates);
+  const confirmReset = async () => {
+    const supabase = await getSupabaseClient();
+    if (supabase) {
+      const ids = certificates.map(c => c.id);
+      if (ids.length > 0) {
+        await supabase.from('certificates').delete().in('id', ids);
+      }
+      const certsToInsert = defaultCertificates.map(({ id: _id, ...rest }) => rest);
+      await supabase.from('certificates').insert(certsToInsert);
+      await loadCertificates();
+    } else {
+      localStorage.removeItem('portfolio_certificates');
+      setCertificates(defaultCertificates);
+    }
     showNotification('Данные сброшены к дефолту', 'info');
     setIsResetting(false);
   };
@@ -157,14 +197,14 @@ function CertificatesManager() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg font-semibold text-[var(--text-main)]">Сертификаты</h2>
         <div className="flex gap-2">
-          <button 
+          <button
             onClick={handleReset}
             className="px-4 py-2 bg-gray-500 text-white rounded-lg flex items-center gap-2 hover:bg-gray-600 transition-colors text-sm"
             style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
           >
             <RefreshCw size={16} /> Сбросить
           </button>
-          <button 
+          <button
             onClick={() => { setEditingItem(null); setIsModalOpen(true); }}
             className="bg-[var(--accent)] hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center gap-2"
             style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
@@ -174,52 +214,56 @@ function CertificatesManager() {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-[var(--bg-primary)] text-[var(--text-secondary)]">
-            <tr>
-              <th className="px-4 py-3 font-medium">Название</th>
-              <th className="px-4 py-3 font-medium">Организация</th>
-              <th className="px-4 py-3 font-medium">Год</th>
-              <th className="px-4 py-3 font-medium">Категория</th>
-              <th className="px-4 py-3 font-medium text-right">Действия</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[var(--border)]">
-            {certificates.map(item => (
-              <tr key={item.id} className="hover:bg-[var(--bg-primary)] transition-colors">
-                <td className="px-4 py-3 text-[var(--text-main)] font-medium">{item.title}</td>
-                <td className="px-4 py-3 text-[var(--text-secondary)]">{item.org}</td>
-                <td className="px-4 py-3 text-[var(--text-secondary)]">{item.year}</td>
-                <td className="px-4 py-3 text-[var(--text-secondary)]">{item.category}</td>
-                <td className="px-4 py-3 text-right">
-                  <div className="flex justify-end gap-2">
-                    <button 
-                      onClick={() => { setEditingItem(item); setIsModalOpen(true); }} 
-                      className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-main)] bg-[var(--bg-primary)] rounded-md"
-                      style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button 
-                      type="button"
-                      onClick={(e) => { 
-                        e.preventDefault();
-                        e.stopPropagation(); 
-                        handleDeleteCertificate(item.id); 
-                      }} 
-                      className="p-1.5 text-[#EF4444] hover:bg-[#EF4444]/10 rounded-md"
-                      style={{ pointerEvents: 'auto', position: 'relative', zIndex: 50, cursor: 'pointer' }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </td>
+      {isLoading ? (
+        <div className="py-8 text-center text-[var(--text-secondary)]">Загрузка...</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-[var(--bg-primary)] text-[var(--text-secondary)]">
+              <tr>
+                <th className="px-4 py-3 font-medium">Название</th>
+                <th className="px-4 py-3 font-medium">Организация</th>
+                <th className="px-4 py-3 font-medium">Год</th>
+                <th className="px-4 py-3 font-medium">Категория</th>
+                <th className="px-4 py-3 font-medium text-right">Действия</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="divide-y divide-[var(--border)]">
+              {certificates.map(item => (
+                <tr key={item.id} className="hover:bg-[var(--bg-primary)] transition-colors">
+                  <td className="px-4 py-3 text-[var(--text-main)] font-medium">{item.title}</td>
+                  <td className="px-4 py-3 text-[var(--text-secondary)]">{item.org}</td>
+                  <td className="px-4 py-3 text-[var(--text-secondary)]">{item.year}</td>
+                  <td className="px-4 py-3 text-[var(--text-secondary)]">{item.category}</td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => { setEditingItem(item); setIsModalOpen(true); }}
+                        className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-main)] bg-[var(--bg-primary)] rounded-md"
+                        style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDeleteCertificate(item.id);
+                        }}
+                        className="p-1.5 text-[#EF4444] hover:bg-[#EF4444]/10 rounded-md"
+                        style={{ pointerEvents: 'auto', position: 'relative', zIndex: 50, cursor: 'pointer' }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {isModalOpen && (
         <Modal title={editingItem ? 'Редактировать сертификат' : 'Добавить сертификат'} onClose={() => setIsModalOpen(false)}>
@@ -232,12 +276,16 @@ function CertificatesManager() {
   );
 }
 
-function CertificateForm({ initialData, onSave }: { initialData: any, onSave: (data: any) => void }) {
+function CertificateForm({ initialData, onSave }: { initialData: any, onSave: (data: any) => void | Promise<void> }) {
   const [formData, setFormData] = useState(initialData || { title: '', org: '', year: '', category: '', cert_url: '' });
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    if (isSaving) return;
+    setIsSaving(true);
+    await onSave(formData);
+    setIsSaving(false);
   };
 
   return (
@@ -267,10 +315,11 @@ function CertificateForm({ initialData, onSave }: { initialData: any, onSave: (d
       <div className="pt-4 flex justify-end">
         <button 
           type="submit" 
-          className="bg-[var(--accent)] text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          disabled={isSaving}
+          className={`bg-[var(--accent)] text-white px-4 py-2 rounded-lg flex items-center gap-2 ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
           style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
         >
-          <Save size={18} /> Сохранить
+          <Save size={18} /> {isSaving ? 'Сохранение...' : 'Сохранить'}
         </button>
       </div>
     </form>
@@ -279,30 +328,42 @@ function CertificateForm({ initialData, onSave }: { initialData: any, onSave: (d
 
 function ProjectsManager() {
   const [projects, setProjects] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
 
-  useEffect(() => {
+  const loadProjects = async () => {
+    setIsLoading(true);
+    const supabase = await getSupabaseClient();
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('year', { ascending: false })
+        .order('created_at', { ascending: false });
+      if (!error && data && data.length > 0) {
+        setProjects(data);
+        setIsLoading(false);
+        return;
+      }
+    }
+    // Fallback: localStorage then defaultProjects
     const saved = localStorage.getItem('portfolio_projects');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          setProjects(parsed);
-        } else {
-          setProjects(defaultProjects);
-        }
-      } catch (e) {
-        setProjects(defaultProjects);
-      }
-    } else {
-      setProjects(defaultProjects);
+        if (Array.isArray(parsed)) { setProjects(parsed); setIsLoading(false); return; }
+      } catch {}
     }
-  }, []);
+    setProjects(defaultProjects);
+    setIsLoading(false);
+  };
 
-  const handleSave = (item: any) => {
+  useEffect(() => { loadProjects(); }, []);
+
+  const handleSave = async (item: any) => {
     if (!item.title?.trim()) {
       showNotification('Введите название проекта', 'error');
       return;
@@ -311,42 +372,69 @@ function ProjectsManager() {
       showNotification('Введите описание проекта', 'error');
       return;
     }
-
-    let newItems;
-    if (editingItem) {
-      newItems = projects.map(i => i.id === item.id ? item : i);
+    const supabase = await getSupabaseClient();
+    if (supabase) {
+      if (editingItem) {
+        const { error } = await supabase.from('projects').update(item).eq('id', item.id);
+        if (error) { showNotification('Ошибка сохранения: ' + error.message, 'error'); return; }
+      } else {
+        const { id: _id, ...itemWithoutId } = item;
+        const { error } = await supabase.from('projects').insert(itemWithoutId);
+        if (error) { showNotification('Ошибка добавления: ' + error.message, 'error'); return; }
+      }
+      await loadProjects();
     } else {
-      newItems = [{ ...item, id: Date.now().toString() }, ...projects];
+      let newItems;
+      if (editingItem) {
+        newItems = projects.map(i => i.id === item.id ? item : i);
+      } else {
+        newItems = [{ ...item, id: Date.now().toString() }, ...projects];
+      }
+      setProjects(newItems);
+      localStorage.setItem('portfolio_projects', JSON.stringify(newItems));
     }
-    setProjects(newItems);
-    localStorage.setItem('portfolio_projects', JSON.stringify(newItems));
     setIsModalOpen(false);
     setEditingItem(null);
+    sessionStorage.removeItem('cache_projects');
     showNotification('✅ Проект сохранён!', 'success');
   };
 
-  const handleDeleteProject = (id: string) => {
-    setDeleteId(id);
-  };
+  const handleDeleteProject = (id: string) => { setDeleteId(id); };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!deleteId) return;
-    setProjects(prev => {
-      const updated = prev.filter(item => item.id !== deleteId);
-      localStorage.setItem('portfolio_projects', JSON.stringify(updated));
-      return updated;
-    });
+    const supabase = await getSupabaseClient();
+    if (supabase) {
+      const { error } = await supabase.from('projects').delete().eq('id', deleteId);
+      if (error) { showNotification('Ошибка удаления: ' + error.message, 'error'); setDeleteId(null); return; }
+      await loadProjects();
+    } else {
+      setProjects(prev => {
+        const updated = prev.filter(item => item.id !== deleteId);
+        localStorage.setItem('portfolio_projects', JSON.stringify(updated));
+        return updated;
+      });
+    }
     showNotification('🗑️ Проект удалён', 'info');
     setDeleteId(null);
   };
 
-  const handleReset = () => {
-    setIsResetting(true);
-  };
+  const handleReset = () => { setIsResetting(true); };
 
-  const confirmReset = () => {
-    localStorage.removeItem('portfolio_projects');
-    setProjects(defaultProjects);
+  const confirmReset = async () => {
+    const supabase = await getSupabaseClient();
+    if (supabase) {
+      const ids = projects.map(p => p.id);
+      if (ids.length > 0) {
+        await supabase.from('projects').delete().in('id', ids);
+      }
+      const projectsToInsert = defaultProjects.map(({ id: _id, ...rest }) => rest);
+      await supabase.from('projects').insert(projectsToInsert);
+      await loadProjects();
+    } else {
+      localStorage.removeItem('portfolio_projects');
+      setProjects(defaultProjects);
+    }
     showNotification('Данные сброшены к дефолту', 'info');
     setIsResetting(false);
   };
@@ -356,15 +444,15 @@ function ProjectsManager() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg font-semibold text-[var(--text-main)]">Проекты</h2>
         <div className="flex gap-2">
-          <button 
+          <button
             onClick={handleReset}
             className="px-4 py-2 bg-gray-500 text-white rounded-lg flex items-center gap-2 hover:bg-gray-600 transition-colors text-sm"
             style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
           >
             <RefreshCw size={16} /> Сбросить
           </button>
-          <button 
-            onClick={() => { setEditingItem(null); setIsModalOpen(true); }} 
+          <button
+            onClick={() => { setEditingItem(null); setIsModalOpen(true); }}
             className="bg-[var(--accent)] hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center gap-2"
             style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
           >
@@ -372,50 +460,54 @@ function ProjectsManager() {
           </button>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-[var(--bg-primary)] text-[var(--text-secondary)]">
-            <tr>
-              <th className="px-4 py-3 font-medium">Название</th>
-              <th className="px-4 py-3 font-medium">Категория</th>
-              <th className="px-4 py-3 font-medium">Год</th>
-              <th className="px-4 py-3 font-medium text-right">Действия</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[var(--border)]">
-            {projects.map(item => (
-              <tr key={item.id} className="hover:bg-[var(--bg-primary)] transition-colors">
-                <td className="px-4 py-3 text-[var(--text-main)] font-medium">{item.icon} {item.title}</td>
-                <td className="px-4 py-3 text-[var(--text-secondary)]">{item.category}</td>
-                <td className="px-4 py-3 text-[var(--text-secondary)]">{item.year}</td>
-                <td className="px-4 py-3 text-right">
-                  <div className="flex justify-end gap-2">
-                    <button 
-                      onClick={() => { setEditingItem(item); setIsModalOpen(true); }} 
-                      className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-main)] bg-[var(--bg-primary)] rounded-md"
-                      style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button 
-                      type="button"
-                      onClick={(e) => { 
-                        e.preventDefault();
-                        e.stopPropagation(); 
-                        handleDeleteProject(item.id); 
-                      }} 
-                      className="p-1.5 text-[#EF4444] hover:bg-[#EF4444]/10 rounded-md"
-                      style={{ pointerEvents: 'auto', position: 'relative', zIndex: 50, cursor: 'pointer' }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </td>
+      {isLoading ? (
+        <div className="py-8 text-center text-[var(--text-secondary)]">Загрузка...</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-[var(--bg-primary)] text-[var(--text-secondary)]">
+              <tr>
+                <th className="px-4 py-3 font-medium">Название</th>
+                <th className="px-4 py-3 font-medium">Категория</th>
+                <th className="px-4 py-3 font-medium">Год</th>
+                <th className="px-4 py-3 font-medium text-right">Действия</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="divide-y divide-[var(--border)]">
+              {projects.map(item => (
+                <tr key={item.id} className="hover:bg-[var(--bg-primary)] transition-colors">
+                  <td className="px-4 py-3 text-[var(--text-main)] font-medium">{item.icon} {item.title}</td>
+                  <td className="px-4 py-3 text-[var(--text-secondary)]">{item.category}</td>
+                  <td className="px-4 py-3 text-[var(--text-secondary)]">{item.year}</td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => { setEditingItem(item); setIsModalOpen(true); }}
+                        className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-main)] bg-[var(--bg-primary)] rounded-md"
+                        style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDeleteProject(item.id);
+                        }}
+                        className="p-1.5 text-[#EF4444] hover:bg-[#EF4444]/10 rounded-md"
+                        style={{ pointerEvents: 'auto', position: 'relative', zIndex: 50, cursor: 'pointer' }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       {isModalOpen && (
         <Modal title={editingItem ? 'Редактировать проект' : 'Добавить проект'} onClose={() => setIsModalOpen(false)}>
           <ProjectForm initialData={editingItem} onSave={handleSave} />
@@ -427,7 +519,7 @@ function ProjectsManager() {
   );
 }
 
-function ProjectForm({ initialData, onSave }: { initialData: any, onSave: (data: any) => void }) {
+function ProjectForm({ initialData, onSave }: { initialData: any, onSave: (data: any) => void | Promise<void> }) {
   const [formData, setFormData] = useState(initialData || { 
     title: '', 
     icon: '🚀', 
@@ -448,10 +540,14 @@ function ProjectForm({ initialData, onSave }: { initialData: any, onSave: (data:
       { value: '', label: '' }
     ]
   });
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    if (isSaving) return;
+    setIsSaving(true);
+    await onSave(formData);
+    setIsSaving(false);
   };
 
   const handleStatChange = (index: number, field: 'value' | 'label', value: string) => {
@@ -551,10 +647,11 @@ function ProjectForm({ initialData, onSave }: { initialData: any, onSave: (data:
       <div className="pt-4 flex justify-end">
         <button 
           type="submit" 
-          className="bg-[var(--accent)] text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          disabled={isSaving}
+          className={`bg-[var(--accent)] text-white px-4 py-2 rounded-lg flex items-center gap-2 ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
           style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
         >
-          <Save size={18} /> Сохранить
+          <Save size={18} /> {isSaving ? 'Сохранение...' : 'Сохранить'}
         </button>
       </div>
     </form>
