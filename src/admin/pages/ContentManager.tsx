@@ -98,7 +98,8 @@ function CertificatesManager() {
       const { data, error } = await supabase
         .from('certificates')
         .select('*')
-        .order('year', { ascending: false });
+        .order('year', { ascending: false })
+        .order('created_at', { ascending: false });
       if (!error && data && data.length > 0) {
         setCertificates(data);
         setIsLoading(false);
@@ -147,6 +148,7 @@ function CertificatesManager() {
     }
     setIsModalOpen(false);
     setEditingItem(null);
+    sessionStorage.removeItem('cache_certificates');
     showNotification('✅ Сертификат сохранён!', 'success');
   };
 
@@ -274,12 +276,16 @@ function CertificatesManager() {
   );
 }
 
-function CertificateForm({ initialData, onSave }: { initialData: any, onSave: (data: any) => void }) {
+function CertificateForm({ initialData, onSave }: { initialData: any, onSave: (data: any) => void | Promise<void> }) {
   const [formData, setFormData] = useState(initialData || { title: '', org: '', year: '', category: '', cert_url: '' });
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    if (isSaving) return;
+    setIsSaving(true);
+    await onSave(formData);
+    setIsSaving(false);
   };
 
   return (
@@ -309,10 +315,11 @@ function CertificateForm({ initialData, onSave }: { initialData: any, onSave: (d
       <div className="pt-4 flex justify-end">
         <button 
           type="submit" 
-          className="bg-[var(--accent)] text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          disabled={isSaving}
+          className={`bg-[var(--accent)] text-white px-4 py-2 rounded-lg flex items-center gap-2 ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
           style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
         >
-          <Save size={18} /> Сохранить
+          <Save size={18} /> {isSaving ? 'Сохранение...' : 'Сохранить'}
         </button>
       </div>
     </form>
@@ -334,7 +341,8 @@ function ProjectsManager() {
       const { data, error } = await supabase
         .from('projects')
         .select('*')
-        .order('year', { ascending: false });
+        .order('year', { ascending: false })
+        .order('created_at', { ascending: false });
       if (!error && data && data.length > 0) {
         setProjects(data);
         setIsLoading(false);
@@ -387,6 +395,7 @@ function ProjectsManager() {
     }
     setIsModalOpen(false);
     setEditingItem(null);
+    sessionStorage.removeItem('cache_projects');
     showNotification('✅ Проект сохранён!', 'success');
   };
 
@@ -510,7 +519,7 @@ function ProjectsManager() {
   );
 }
 
-function ProjectForm({ initialData, onSave }: { initialData: any, onSave: (data: any) => void }) {
+function ProjectForm({ initialData, onSave }: { initialData: any, onSave: (data: any) => void | Promise<void> }) {
   const [formData, setFormData] = useState(initialData || { 
     title: '', 
     icon: '🚀', 
@@ -531,10 +540,14 @@ function ProjectForm({ initialData, onSave }: { initialData: any, onSave: (data:
       { value: '', label: '' }
     ]
   });
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    if (isSaving) return;
+    setIsSaving(true);
+    await onSave(formData);
+    setIsSaving(false);
   };
 
   const handleStatChange = (index: number, field: 'value' | 'label', value: string) => {
@@ -634,10 +647,11 @@ function ProjectForm({ initialData, onSave }: { initialData: any, onSave: (data:
       <div className="pt-4 flex justify-end">
         <button 
           type="submit" 
-          className="bg-[var(--accent)] text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          disabled={isSaving}
+          className={`bg-[var(--accent)] text-white px-4 py-2 rounded-lg flex items-center gap-2 ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
           style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
         >
-          <Save size={18} /> Сохранить
+          <Save size={18} /> {isSaving ? 'Сохранение...' : 'Сохранить'}
         </button>
       </div>
     </form>

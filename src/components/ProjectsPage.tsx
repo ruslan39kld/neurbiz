@@ -32,7 +32,8 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
         const { data, error } = await supabase
           .from('projects')
           .select('*')
-          .order('year', { ascending: false });
+          .order('year', { ascending: false })
+          .order('created_at', { ascending: false });
         if (!error && data && data.length > 0) {
           // Merge with defaultProjects to fill in any missing rich fields (imageUrl, videoUrl, etc.)
           const merged = data.map((savedItem: any) => {

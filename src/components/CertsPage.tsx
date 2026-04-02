@@ -35,7 +35,8 @@ export default function CertsPage() {
         const { data, error } = await supabase
           .from('certificates')
           .select('*')
-          .order('year', { ascending: false });
+          .order('year', { ascending: false })
+          .order('created_at', { ascending: false });
         if (!error && data && data.length > 0) {
           setCertificates(data);
           sessionStorage.setItem('cache_certificates', JSON.stringify(data));
