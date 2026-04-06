@@ -168,6 +168,7 @@ function CertificatesManager() {
         return updated;
       });
     }
+    sessionStorage.removeItem('cache_certificates');
     showNotification('🗑️ Сертификат удалён', 'info');
     setDeleteId(null);
   };
@@ -188,6 +189,7 @@ function CertificatesManager() {
       localStorage.removeItem('portfolio_certificates');
       setCertificates(defaultCertificates);
     }
+    sessionStorage.removeItem('cache_certificates');
     showNotification('Данные сброшены к дефолту', 'info');
     setIsResetting(false);
   };
@@ -415,6 +417,7 @@ function ProjectsManager() {
         return updated;
       });
     }
+    sessionStorage.removeItem('cache_projects');
     showNotification('🗑️ Проект удалён', 'info');
     setDeleteId(null);
   };
@@ -435,6 +438,7 @@ function ProjectsManager() {
       localStorage.removeItem('portfolio_projects');
       setProjects(defaultProjects);
     }
+    sessionStorage.removeItem('cache_projects');
     showNotification('Данные сброшены к дефолту', 'info');
     setIsResetting(false);
   };
