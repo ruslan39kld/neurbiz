@@ -47,6 +47,19 @@ export default function CertsPage() {
     };
 
     loadCertificates();
+
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    const channel = supabase
+      .channel('certificates-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'certificates' }, () => {
+        sessionStorage.removeItem('cache_certificates');
+        loadCertificates();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const onUpdate = useCallback(({ x, y, scale }: { x: number; y: number; scale: number }) => {

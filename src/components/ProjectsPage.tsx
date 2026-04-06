@@ -56,6 +56,19 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
     };
 
     loadProjects();
+
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    const channel = supabase
+      .channel('projects-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, () => {
+        sessionStorage.removeItem('cache_projects');
+        loadProjects();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   useEffect(() => {
