@@ -523,26 +523,47 @@ function ProjectsManager() {
   );
 }
 
+function normalizeArray(value: any): any[] {
+  if (Array.isArray(value)) return value;
+  if (value == null) return [];
+  if (typeof value === 'string') {
+    try { const parsed = JSON.parse(value); return Array.isArray(parsed) ? parsed : []; } catch { return []; }
+  }
+  return [];
+}
+
+const DEFAULT_STATS = [
+  { value: '', label: '' },
+  { value: '', label: '' },
+  { value: '', label: '' }
+];
+
 function ProjectForm({ initialData, onSave }: { initialData: any, onSave: (data: any) => void | Promise<void> }) {
-  const [formData, setFormData] = useState(initialData || { 
-    title: '', 
-    icon: '🚀', 
-    category: '', 
+  const normalized = initialData ? {
+    ...initialData,
+    tags: normalizeArray(initialData.tags),
+    tasks: normalizeArray(initialData.tasks),
+    stats: (() => {
+      const s = normalizeArray(initialData.stats);
+      return s.length > 0 ? s : DEFAULT_STATS;
+    })(),
+  } : null;
+
+  const [formData, setFormData] = useState(normalized || {
+    title: '',
+    icon: '🚀',
+    category: '',
     stage: 'MVP',
-    description: '', 
-    detail: '', 
-    year: new Date().getFullYear(), 
+    description: '',
+    detail: '',
+    year: new Date().getFullYear(),
     tags: [],
     tasks: [],
     result: '',
     imageUrl: '',
     videoUrl: '',
     liveUrl: '',
-    stats: [
-      { value: '', label: '' },
-      { value: '', label: '' },
-      { value: '', label: '' }
-    ]
+    stats: DEFAULT_STATS
   });
   const [isSaving, setIsSaving] = useState(false);
 
