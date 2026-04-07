@@ -274,12 +274,12 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
                       {project.description}
                     </p>
                     <div className="flex flex-wrap gap-1.5 mb-3">
-                      {project.tags && project.tags.slice(0, 3).map((t: string) => (
+                      {Array.isArray(project.tags) && project.tags.slice(0, 3).map((t: string) => (
                         <span key={t} className="bg-[#FF6B2B]/10 text-[#FF6B2B] text-[11px] px-2 py-1 rounded-full">
                           {t}
                         </span>
                       ))}
-                      {project.tags && project.tags.length > 3 && (
+                      {Array.isArray(project.tags) && project.tags.length > 3 && (
                         <span className="bg-[#FF6B2B]/10 text-[#FF6B2B] text-[11px] px-2 py-1 rounded-full">
                           +{project.tags.length - 3}
                         </span>
@@ -400,7 +400,7 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
                         ЧТО СДЕЛАНО
                       </h3>
                       <ul className="flex flex-col">
-                        {(selectedProject.tasks || selectedProject.whatDone || selectedProject.detail.split('. ').filter((s: string) => s.trim().length > 0)).map((point: string, i: number) => (
+                        {(Array.isArray(selectedProject.tasks) && selectedProject.tasks.length > 0 ? selectedProject.tasks : Array.isArray(selectedProject.whatDone) && selectedProject.whatDone.length > 0 ? selectedProject.whatDone : selectedProject.detail.split('. ').filter((s: string) => s.trim().length > 0)).map((point: string, i: number) => (
                           <li key={i} className="flex items-start gap-3 py-2.5 border-b border-[#F0F0F0] text-[14px] text-[#2A2A2A] leading-[1.5]">
                             <span className="shrink-0">✅</span>
                             <span>{point.trim()}{point.endsWith('.') || point.includes('✅') ? '' : '.'}</span>
@@ -426,7 +426,7 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
                     <div className="bg-[rgba(244,98,31,0.04)] p-5 rounded-xl border border-[rgba(244,98,31,0.10)]">
                       <h4 className="text-[11px] text-[#8A8A8A] uppercase tracking-[1px] font-bold mb-4">Стек технологий</h4>
                       <div className="flex flex-wrap gap-2">
-                        {selectedProject.tags && selectedProject.tags.map((t: string) => (
+                        {Array.isArray(selectedProject.tags) && selectedProject.tags.map((t: string) => (
                           <span key={t} className="bg-[rgba(244,98,31,0.08)] text-[#E05510] border border-[rgba(244,98,31,0.20)] text-[13px] font-medium px-3.5 py-1 rounded-full">
                             {t}
                           </span>
