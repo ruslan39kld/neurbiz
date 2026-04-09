@@ -106,12 +106,17 @@ export default function ContactsPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-[20px] overflow-hidden p-card"
+            whileHover={{ scale: 1.02, y: -6 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-[20px] overflow-hidden cursor-pointer"
+            style={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)' }}
+            onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,107,43,0.15), 0 0 24px rgba(255,107,43,0.12)')}
+            onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)')}
           >
             <img
               src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20svyz.jpg"
               alt="AI collaboration"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-105"
               style={{ minHeight: '320px' }}
             />
           </motion.div>
