@@ -10,16 +10,33 @@ export default function ContactsPage() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('Сообщение успешно отправлено!');
+  const [toastError, setToastError] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Ошибка отправки');
+      setToastMessage('Сообщение успешно отправлено!');
+      setToastError(false);
+      setFormData({ name: '', email: '', message: '' });
+      trackEvent('contacts', 'form_submit_success');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Ошибка отправки';
+      setToastMessage(msg);
+      setToastError(true);
+      trackEvent('contacts', 'form_submit_error');
+    } finally {
       setIsSubmitting(false);
       setShowToast(true);
-      setFormData({ name: '', email: '', message: '' });
-    }, 1500);
+    }
   };
 
   return (
@@ -194,10 +211,11 @@ export default function ContactsPage() {
         </div>
       </motion.div>
 
-      <Toast 
-        message="Сообщение успешно отправлено!" 
-        isVisible={showToast} 
-        onClose={() => setShowToast(false)} 
+      <Toast
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        isError={toastError}
       />
     </div>
   );

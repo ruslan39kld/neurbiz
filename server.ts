@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
+import nodemailer from 'nodemailer';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -160,6 +161,47 @@ app.post('/api/gigachat/chat', async (req, res) => {
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : String(e);
     res.status(500).json({ error: message });
+  }
+});
+
+// POST /api/contact — отправка письма с формы обратной связи
+app.post('/api/contact', async (req, res) => {
+  const { name, email, message } = req.body as { name?: string; email?: string; message?: string };
+
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: 'Заполните все поля' });
+  }
+
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+
+  if (!smtpUser || !smtpPass) {
+    console.error('[Contact] SMTP_USER или SMTP_PASS не настроены');
+    return res.status(500).json({ error: 'Сервер не настроен для отправки писем' });
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.yandex.ru',
+      port: 465,
+      secure: true,
+      auth: { user: smtpUser, pass: smtpPass },
+    });
+
+    await transporter.sendMail({
+      from: `"NeurBiz Site" <${smtpUser}>`,
+      to: 'ruslan-39kld@yandex.ru',
+      replyTo: email,
+      subject: `Новое сообщение с сайта от ${name}`,
+      text: `Имя: ${name}\nEmail: ${email}\n\nСообщение:\n${message}`,
+      html: `<p><b>Имя:</b> ${name}</p><p><b>Email:</b> ${email}</p><hr><p>${message.replace(/\n/g, '<br>')}</p>`,
+    });
+
+    res.json({ ok: true });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error('[Contact] Ошибка отправки:', msg);
+    res.status(500).json({ error: 'Не удалось отправить письмо' });
   }
 });
 
