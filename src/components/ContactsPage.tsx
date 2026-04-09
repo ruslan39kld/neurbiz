@@ -1,43 +1,10 @@
-import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Send, Mail, Phone, MapPin } from 'lucide-react';
-import Toast from './Toast';
+import { Send, Mail, MapPin } from 'lucide-react';
 import { trackEvent } from '../utils/analytics';
 
 import SectionTitle from './SectionTitle';
 
 export default function ContactsPage() {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('Сообщение успешно отправлено!');
-  const [toastError, setToastError] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Ошибка отправки');
-      setToastMessage('Сообщение успешно отправлено!');
-      setToastError(false);
-      setFormData({ name: '', email: '', message: '' });
-      trackEvent('contacts', 'form_submit_success');
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Ошибка отправки';
-      setToastMessage(msg);
-      setToastError(true);
-      trackEvent('contacts', 'form_submit_error');
-    } finally {
-      setIsSubmitting(false);
-      setShowToast(true);
-    }
-  };
 
   return (
     <div className="px-[20px] py-[24px] md:px-[32px] md:py-[32px] lg:px-[72px] lg:py-[56px] max-w-7xl mx-auto">
@@ -134,89 +101,23 @@ export default function ContactsPage() {
             </div>
           </div>
 
-          {/* Contact Form */}
+          {/* Image block */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-[20px] p-6 sm:p-8 p-card"
+            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-[20px] overflow-hidden p-card"
           >
-            <h2 className="font-orbitron text-[24px] text-[var(--text-main)] mb-6">Написать сообщение</h2>
-            
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label htmlFor="name" className="block font-dm text-[14px] text-[var(--text-secondary)] mb-2">
-                  Ваше имя
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-main)] font-dm focus:outline-none focus:border-[#FF6B2B] focus:ring-1 focus:ring-[#FF6B2B] transition-all"
-                  placeholder="Иван Иванов"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="email" className="block font-dm text-[14px] text-[var(--text-secondary)] mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-main)] font-dm focus:outline-none focus:border-[#FF6B2B] focus:ring-1 focus:ring-[#FF6B2B] transition-all"
-                  placeholder="ivan@example.com"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="message" className="block font-dm text-[14px] text-[var(--text-secondary)] mb-2">
-                  Сообщение
-                </label>
-                <textarea
-                  id="message"
-                  required
-                  rows={4}
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-main)] font-dm focus:outline-none focus:border-[#FF6B2B] focus:ring-1 focus:ring-[#FF6B2B] transition-all resize-none"
-                  placeholder="Расскажите о вашем проекте..."
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-[#FF6B2B] text-white font-orbitron text-[14px] py-4 rounded-xl hover:bg-[#e55a1f] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Отправка...
-                  </>
-                ) : (
-                  <>
-                    <Send size={18} />
-                    Отправить сообщение
-                  </>
-                )}
-              </button>
-            </form>
+            <img
+              src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20svyz.jpg"
+              alt="AI collaboration"
+              className="w-full h-full object-cover"
+              style={{ minHeight: '320px' }}
+            />
           </motion.div>
         </div>
       </motion.div>
 
-      <Toast
-        message={toastMessage}
-        isVisible={showToast}
-        onClose={() => setShowToast(false)}
-        isError={toastError}
-      />
     </div>
   );
 }
