@@ -102,10 +102,14 @@ export default function Sidebar({ activeTab, setActiveTab, theme, toggleTheme, i
 
         {/* Bottom Section */}
         <div className="p-4 border-t border-[var(--border)]">
-          <button className="w-full bg-[#FF6B2B] text-white font-orbitron text-[12px] py-[10px] rounded-lg hover:bg-[#e55a1f] transition-colors flex items-center justify-center gap-2 mb-3">
+          <a
+            href="/resume/index.html"
+            target="_blank"
+            className="w-full bg-[#FF6B2B] text-white font-orbitron text-[12px] py-[10px] rounded-lg hover:bg-[#e55a1f] transition-colors flex items-center justify-center gap-2 mb-3"
+          >
             <Download size={14} />
-            Скачать резюме
-          </button>
+            Смотреть резюме
+          </a>
           
           <div className="flex justify-center gap-[10px]">
             <a href="#" className="w-8 h-8 rounded-full border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[#FF6B2B] hover:border-[#FF6B2B] hover:scale-110 hover:shadow-[var(--glow)] transition-all">
