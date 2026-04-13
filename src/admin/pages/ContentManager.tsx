@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Plus, Edit2, Trash2, X, Save, RefreshCw } from 'lucide-react';
 import { certificates as defaultCertificates, projects as defaultProjects } from '../../data';
-import { getSupabaseClient } from '../../services/supabaseClient';
 
 function showNotification(message: string, type: 'success' | 'error' | 'info' = 'success') {
   const toast = document.createElement('div');
@@ -93,59 +92,50 @@ function CertificatesManager() {
 
   const loadCertificates = async () => {
     setIsLoading(true);
-    const supabase = await getSupabaseClient();
-    if (supabase) {
-      const { data, error } = await supabase
-        .from('certificates')
-        .select('*')
-        .order('year', { ascending: false })
-        .order('created_at', { ascending: false });
-      if (!error && data && data.length > 0) {
-        setCertificates(data);
-        setIsLoading(false);
-        return;
-      }
-    }
-    // Fallback: localStorage then defaultCertificates
+    // Check localStorage for admin edits
     const saved = localStorage.getItem('portfolio_certificates');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) { setCertificates(parsed); setIsLoading(false); return; }
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCertificates(parsed);
+          setIsLoading(false);
+          return;
+        }
       } catch {}
     }
+    // Load from JSON file and cache to localStorage
+    try {
+      const res = await fetch('/data/certificates.json');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setCertificates(data);
+          localStorage.setItem('portfolio_certificates', JSON.stringify(data));
+          setIsLoading(false);
+          return;
+        }
+      }
+    } catch {}
     setCertificates(defaultCertificates);
     setIsLoading(false);
   };
 
   useEffect(() => { loadCertificates(); }, []);
 
-  const handleSave = async (item: any) => {
+  const handleSave = (item: any) => {
     if (!item.title?.trim()) {
       showNotification('Введите название сертификата', 'error');
       return;
     }
-    const supabase = await getSupabaseClient();
-    if (supabase) {
-      if (editingItem) {
-        const { error } = await supabase.from('certificates').update(item).eq('id', item.id);
-        if (error) { showNotification('Ошибка сохранения: ' + error.message, 'error'); return; }
-      } else {
-        const { id: _id, ...itemWithoutId } = item;
-        const { error } = await supabase.from('certificates').insert(itemWithoutId);
-        if (error) { showNotification('Ошибка добавления: ' + error.message, 'error'); return; }
-      }
-      await loadCertificates();
+    let newItems;
+    if (editingItem) {
+      newItems = certificates.map(i => i.id === item.id ? item : i);
     } else {
-      let newItems;
-      if (editingItem) {
-        newItems = certificates.map(i => i.id === item.id ? item : i);
-      } else {
-        newItems = [{ ...item, id: Date.now().toString() }, ...certificates];
-      }
-      setCertificates(newItems);
-      localStorage.setItem('portfolio_certificates', JSON.stringify(newItems));
+      newItems = [{ ...item, id: Date.now().toString() }, ...certificates];
     }
+    setCertificates(newItems);
+    localStorage.setItem('portfolio_certificates', JSON.stringify(newItems));
     setIsModalOpen(false);
     setEditingItem(null);
     sessionStorage.removeItem('cache_certificates');
@@ -154,20 +144,13 @@ function CertificatesManager() {
 
   const handleDeleteCertificate = (id: string) => { setDeleteId(id); };
 
-  const confirmDelete = async () => {
+  const confirmDelete = () => {
     if (!deleteId) return;
-    const supabase = await getSupabaseClient();
-    if (supabase) {
-      const { error } = await supabase.from('certificates').delete().eq('id', deleteId);
-      if (error) { showNotification('Ошибка удаления: ' + error.message, 'error'); setDeleteId(null); return; }
-      await loadCertificates();
-    } else {
-      setCertificates(prev => {
-        const updated = prev.filter(item => item.id !== deleteId);
-        localStorage.setItem('portfolio_certificates', JSON.stringify(updated));
-        return updated;
-      });
-    }
+    setCertificates(prev => {
+      const updated = prev.filter(item => item.id !== deleteId);
+      localStorage.setItem('portfolio_certificates', JSON.stringify(updated));
+      return updated;
+    });
     sessionStorage.removeItem('cache_certificates');
     showNotification('🗑️ Сертификат удалён', 'info');
     setDeleteId(null);
@@ -176,20 +159,9 @@ function CertificatesManager() {
   const handleReset = () => { setIsResetting(true); };
 
   const confirmReset = async () => {
-    const supabase = await getSupabaseClient();
-    if (supabase) {
-      const ids = certificates.map(c => c.id);
-      if (ids.length > 0) {
-        await supabase.from('certificates').delete().in('id', ids);
-      }
-      const certsToInsert = defaultCertificates.map(({ id: _id, ...rest }) => rest);
-      await supabase.from('certificates').insert(certsToInsert);
-      await loadCertificates();
-    } else {
-      localStorage.removeItem('portfolio_certificates');
-      setCertificates(defaultCertificates);
-    }
+    localStorage.removeItem('portfolio_certificates');
     sessionStorage.removeItem('cache_certificates');
+    await loadCertificates();
     showNotification('Данные сброшены к дефолту', 'info');
     setIsResetting(false);
   };
@@ -338,34 +310,38 @@ function ProjectsManager() {
 
   const loadProjects = async () => {
     setIsLoading(true);
-    const supabase = await getSupabaseClient();
-    if (supabase) {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('year', { ascending: false })
-        .order('created_at', { ascending: false });
-      if (!error && data && data.length > 0) {
-        setProjects(data);
-        setIsLoading(false);
-        return;
-      }
-    }
-    // Fallback: localStorage then defaultProjects
+    // Check localStorage for admin edits
     const saved = localStorage.getItem('portfolio_projects');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) { setProjects(parsed); setIsLoading(false); return; }
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProjects(parsed);
+          setIsLoading(false);
+          return;
+        }
       } catch {}
     }
+    // Load from JSON file and cache to localStorage
+    try {
+      const res = await fetch('/data/projects.json');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setProjects(data);
+          localStorage.setItem('portfolio_projects', JSON.stringify(data));
+          setIsLoading(false);
+          return;
+        }
+      }
+    } catch {}
     setProjects(defaultProjects);
     setIsLoading(false);
   };
 
   useEffect(() => { loadProjects(); }, []);
 
-  const handleSave = async (item: any) => {
+  const handleSave = (item: any) => {
     if (!item.title?.trim()) {
       showNotification('Введите название проекта', 'error');
       return;
@@ -374,27 +350,14 @@ function ProjectsManager() {
       showNotification('Введите описание проекта', 'error');
       return;
     }
-    const supabase = await getSupabaseClient();
-    if (supabase) {
-      if (editingItem) {
-        const { error } = await supabase.from('projects').update(item).eq('id', item.id);
-        if (error) { showNotification('Ошибка сохранения: ' + error.message, 'error'); return; }
-      } else {
-        const { id: _id, ...itemWithoutId } = item;
-        const { error } = await supabase.from('projects').insert(itemWithoutId);
-        if (error) { showNotification('Ошибка добавления: ' + error.message, 'error'); return; }
-      }
-      await loadProjects();
+    let newItems;
+    if (editingItem) {
+      newItems = projects.map(i => i.id === item.id ? item : i);
     } else {
-      let newItems;
-      if (editingItem) {
-        newItems = projects.map(i => i.id === item.id ? item : i);
-      } else {
-        newItems = [{ ...item, id: Date.now().toString() }, ...projects];
-      }
-      setProjects(newItems);
-      localStorage.setItem('portfolio_projects', JSON.stringify(newItems));
+      newItems = [{ ...item, id: Date.now().toString() }, ...projects];
     }
+    setProjects(newItems);
+    localStorage.setItem('portfolio_projects', JSON.stringify(newItems));
     setIsModalOpen(false);
     setEditingItem(null);
     sessionStorage.removeItem('cache_projects');
@@ -403,20 +366,13 @@ function ProjectsManager() {
 
   const handleDeleteProject = (id: string) => { setDeleteId(id); };
 
-  const confirmDelete = async () => {
+  const confirmDelete = () => {
     if (!deleteId) return;
-    const supabase = await getSupabaseClient();
-    if (supabase) {
-      const { error } = await supabase.from('projects').delete().eq('id', deleteId);
-      if (error) { showNotification('Ошибка удаления: ' + error.message, 'error'); setDeleteId(null); return; }
-      await loadProjects();
-    } else {
-      setProjects(prev => {
-        const updated = prev.filter(item => item.id !== deleteId);
-        localStorage.setItem('portfolio_projects', JSON.stringify(updated));
-        return updated;
-      });
-    }
+    setProjects(prev => {
+      const updated = prev.filter(item => item.id !== deleteId);
+      localStorage.setItem('portfolio_projects', JSON.stringify(updated));
+      return updated;
+    });
     sessionStorage.removeItem('cache_projects');
     showNotification('🗑️ Проект удалён', 'info');
     setDeleteId(null);
@@ -425,20 +381,9 @@ function ProjectsManager() {
   const handleReset = () => { setIsResetting(true); };
 
   const confirmReset = async () => {
-    const supabase = await getSupabaseClient();
-    if (supabase) {
-      const ids = projects.map(p => p.id);
-      if (ids.length > 0) {
-        await supabase.from('projects').delete().in('id', ids);
-      }
-      const projectsToInsert = defaultProjects.map(({ id: _id, ...rest }) => rest);
-      await supabase.from('projects').insert(projectsToInsert);
-      await loadProjects();
-    } else {
-      localStorage.removeItem('portfolio_projects');
-      setProjects(defaultProjects);
-    }
+    localStorage.removeItem('portfolio_projects');
     sessionStorage.removeItem('cache_projects');
+    await loadProjects();
     showNotification('Данные сброшены к дефолту', 'info');
     setIsResetting(false);
   };

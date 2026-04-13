@@ -2,7 +2,6 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import QuickPinchZoom, { make3dTransformValue } from 'react-quick-pinch-zoom';
 import { certificates as defaultCertificates } from '../data';
-import { getSupabaseClient } from '../services/supabaseClient';
 import Modal from './Modal';
 import SectionTitle from './SectionTitle';
 
@@ -29,37 +28,36 @@ export default function CertsPage() {
         } catch {}
       }
 
-      // Try Supabase
-      const supabase = await getSupabaseClient();
-      if (supabase) {
-        const { data, error } = await supabase
-          .from('certificates')
-          .select('*')
-          .order('year', { ascending: false })
-          .order('created_at', { ascending: false });
-        if (!error && data && data.length > 0) {
-          setCertificates(data);
-          sessionStorage.setItem('cache_certificates', JSON.stringify(data));
-          return;
-        }
+      // Admin edits stored in localStorage take priority
+      const adminSaved = localStorage.getItem('portfolio_certificates');
+      if (adminSaved) {
+        try {
+          const parsed = JSON.parse(adminSaved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setCertificates(parsed);
+            sessionStorage.setItem('cache_certificates', JSON.stringify(parsed));
+            return;
+          }
+        } catch {}
       }
-      // Fallback: src/data.ts (defaultCertificates already set as initial state)
+
+      // Fetch from static JSON file
+      try {
+        const res = await fetch('/data/certificates.json');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setCertificates(data);
+            sessionStorage.setItem('cache_certificates', JSON.stringify(data));
+            return;
+          }
+        }
+      } catch {}
+
+      // Final fallback: hardcoded defaults from src/data.ts
     };
 
     loadCertificates();
-
-    const supabase = getSupabaseClient();
-    if (!supabase) return;
-
-    const channel = supabase
-      .channel('certificates-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'certificates' }, () => {
-        sessionStorage.removeItem('cache_certificates');
-        loadCertificates();
-      })
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const onUpdate = useCallback(({ x, y, scale }: { x: number; y: number; scale: number }) => {

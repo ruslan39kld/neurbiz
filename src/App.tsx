@@ -16,7 +16,6 @@ import ContactsPage from './components/ContactsPage';
 import BotsPage from './components/BotsPage';
 import AdminApp from './admin/AdminApp';
 import { trackEvent } from './utils/analytics';
-import { seedIfEmpty } from './services/seedData';
 
 const initializeLocalStorage = () => {
   if (!localStorage.getItem('portfolio_reviews')) {
@@ -53,7 +52,6 @@ export default function App() {
 
   useEffect(() => {
     initializeLocalStorage();
-    seedIfEmpty(); // Seed Supabase with default data if tables are empty
     // Check for active admin session and redirect if on main site
     if (!isAdminRoute) {
       const isAuth = localStorage.getItem('admin_auth') === 'true' || sessionStorage.getItem('admin_auth') === 'true';

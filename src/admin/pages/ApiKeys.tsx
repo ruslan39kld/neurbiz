@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { getSupabaseClient } from '../../services/supabaseClient';
 
 interface KeyState {
   value: string;
@@ -10,8 +9,6 @@ interface KeyState {
 
 const ApiKeys: React.FC = () => {
   const [keys, setKeys] = useState<Record<string, KeyState>>({
-    supabase_url: { value: '', editing: false, inputValue: '', visible: false },
-    supabase_anon: { value: '', editing: false, inputValue: '', visible: false },
     gigachat: { value: '', editing: false, inputValue: '', visible: false },
     claude: { value: '', editing: false, inputValue: '', visible: false },
     telegram: { value: '', editing: false, inputValue: '', visible: false },
@@ -19,180 +16,58 @@ const ApiKeys: React.FC = () => {
   const [savedDates, setSavedDates] = useState<Record<string, string>>({});
   const [toast, setToast] = useState('');
 
-  const loadFromLocalStorage = () => {
-    const load = (k: string, noEncrypt?: boolean) => {
-      const v = localStorage.getItem(noEncrypt ? k : `apikey_${k}`);
-      if (!v) return '';
-      if (noEncrypt) return v;
-      try { return atob(v); } catch { return v; }
+  useEffect(() => {
+    const load = (k: string) => {
+      const raw = localStorage.getItem(`apikey_${k}`);
+      if (!raw) return '';
+      try { return atob(raw); } catch { return raw; }
     };
     setKeys(prev => ({
-      supabase_url: { ...prev.supabase_url, value: load('supabase_url', true), inputValue: load('supabase_url', true) },
-      supabase_anon: { ...prev.supabase_anon, value: load('supabase_anon'), inputValue: load('supabase_anon') },
       gigachat: { ...prev.gigachat, value: load('gigachat'), inputValue: load('gigachat') },
-      claude: { ...prev.claude, value: load('claude'), inputValue: load('claude') },
+      claude:   { ...prev.claude,   value: load('claude'),   inputValue: load('claude') },
       telegram: { ...prev.telegram, value: load('telegram'), inputValue: load('telegram') },
     }));
     setSavedDates({
-      supabase_url: localStorage.getItem('supabase_url_date') || '',
-      supabase_anon: localStorage.getItem('apikey_supabase_anon_date') || '',
       gigachat: localStorage.getItem('apikey_gigachat_date') || '',
-      claude: localStorage.getItem('apikey_claude_date') || '',
+      claude:   localStorage.getItem('apikey_claude_date')   || '',
       telegram: localStorage.getItem('apikey_telegram_date') || '',
     });
-  };
-
-  useEffect(() => {
-    // First load from localStorage (bootstrap)
-    loadFromLocalStorage();
-
-    // Then try to load from Supabase and override
-    const loadFromSupabase = async () => {
-      const supabase = await getSupabaseClient();
-      if (!supabase) return;
-      const { data, error } = await supabase
-        .from('api_keys')
-        .select('key_name, key_value, updated_at');
-      if (error || !data) return;
-
-      const map: Record<string, { value: string; date: string }> = {};
-      for (const row of data) {
-        map[row.key_name] = {
-          value: row.key_value || '',
-          date: row.updated_at ? new Date(row.updated_at).toLocaleString('ru') : '',
-        };
-      }
-
-      setKeys(prev => {
-        const next = { ...prev };
-        const keyMap: Record<string, string> = {
-          supabase_url: 'supabase_url',
-          supabase_anon: 'supabase_anon',
-          gigachat: 'gigachat',
-          claude: 'claude',
-          telegram: 'telegram',
-        };
-        for (const [stateKey, supabaseKey] of Object.entries(keyMap)) {
-          if (map[supabaseKey] !== undefined && map[supabaseKey].value) {
-            next[stateKey] = {
-              ...prev[stateKey],
-              value: map[supabaseKey].value,
-              inputValue: map[supabaseKey].value,
-            };
-          }
-        }
-        return next;
-      });
-
-      setSavedDates(prev => {
-        const next = { ...prev };
-        const keyMap: Record<string, string> = {
-          supabase_url: 'supabase_url',
-          supabase_anon: 'supabase_anon',
-          gigachat: 'gigachat',
-          claude: 'claude',
-          telegram: 'telegram',
-        };
-        for (const [stateKey, supabaseKey] of Object.entries(keyMap)) {
-          if (map[supabaseKey]?.date) {
-            next[stateKey] = map[supabaseKey].date;
-          }
-        }
-        return next;
-      });
-    };
-
-    loadFromSupabase();
   }, []);
 
   const startEdit = (k: string) => {
-    setKeys(prev => ({
-      ...prev,
-      [k]: { ...prev[k], editing: true, inputValue: prev[k].value }
-    }));
+    setKeys(prev => ({ ...prev, [k]: { ...prev[k], editing: true, inputValue: prev[k].value } }));
   };
 
   const cancelEdit = (k: string) => {
-    setKeys(prev => ({
-      ...prev,
-      [k]: { ...prev[k], editing: false, inputValue: prev[k].value }
-    }));
+    setKeys(prev => ({ ...prev, [k]: { ...prev[k], editing: false, inputValue: prev[k].value } }));
   };
 
-  const saveKey = async (k: string, noEncrypt?: boolean) => {
+  const saveKey = (k: string) => {
     const newVal = keys[k].inputValue.trim();
     if (!newVal) return;
-
-    // Save to localStorage (bootstrap / fallback)
-    const storageKey = noEncrypt ? k : `apikey_${k}`;
-    localStorage.setItem(storageKey, noEncrypt ? newVal : btoa(newVal));
+    localStorage.setItem(`apikey_${k}`, btoa(newVal));
     const now = new Date().toLocaleString('ru');
-    localStorage.setItem(`${storageKey}_date`, now);
-
-    // Save to Supabase api_keys table
-    const supabaseKeyName = k; // key names match: supabase_url, supabase_anon, gigachat, claude, telegram
-    const supabase = await getSupabaseClient();
-    if (supabase) {
-      await supabase
-        .from('api_keys')
-        .upsert(
-          { key_name: supabaseKeyName, key_value: newVal, updated_at: new Date().toISOString() },
-          { onConflict: 'key_name' }
-        );
-    }
-
-    setKeys(prev => ({
-      ...prev,
-      [k]: { ...prev[k], value: newVal, editing: false }
-    }));
+    localStorage.setItem(`apikey_${k}_date`, now);
+    setKeys(prev => ({ ...prev, [k]: { ...prev[k], value: newVal, editing: false } }));
     setSavedDates(prev => ({ ...prev, [k]: now }));
-    setToast(`✅ Ключ сохранён!`);
+    setToast('✅ Ключ сохранён!');
     setTimeout(() => setToast(''), 3000);
   };
 
   const toggleVisible = (k: string) => {
-    setKeys(prev => ({
-      ...prev,
-      [k]: { ...prev[k], visible: !prev[k].visible }
-    }));
+    setKeys(prev => ({ ...prev, [k]: { ...prev[k], visible: !prev[k].visible } }));
   };
 
-  const deleteKey = async (k: string, noEncrypt?: boolean) => {
-    // Remove from localStorage
-    const storageKey = noEncrypt ? k : `apikey_${k}`;
-    localStorage.removeItem(storageKey);
-    localStorage.removeItem(`${storageKey}_date`);
-
-    // Remove from Supabase
-    const supabase = await getSupabaseClient();
-    if (supabase) {
-      await supabase
-        .from('api_keys')
-        .update({ key_value: null, updated_at: new Date().toISOString() })
-        .eq('key_name', k);
-    }
-
-    setKeys(prev => ({
-      ...prev,
-      [k]: { ...prev[k], value: '', inputValue: '', editing: false }
-    }));
+  const deleteKey = (k: string) => {
+    localStorage.removeItem(`apikey_${k}`);
+    localStorage.removeItem(`apikey_${k}_date`);
+    setKeys(prev => ({ ...prev, [k]: { ...prev[k], value: '', inputValue: '', editing: false } }));
     setSavedDates(prev => ({ ...prev, [k]: '' }));
     setToast('🗑 Ключ удалён');
     setTimeout(() => setToast(''), 3000);
   };
 
   const keyConfigs = [
-    {
-      id: 'supabase_url',
-      label: '🗄️ Supabase URL',
-      hint: 'URL проекта Supabase (Project URL)',
-      noEncrypt: true
-    },
-    {
-      id: 'supabase_anon',
-      label: '🔑 Supabase Anon Key',
-      hint: 'Публичный ключ (Project API keys -> anon/public)'
-    },
     {
       id: 'gigachat',
       label: '🔑 GigaChat API Key',
@@ -201,7 +76,7 @@ const ApiKeys: React.FC = () => {
     {
       id: 'claude',
       label: '🔑 Claude API Key (Anthropic)',
-      hint: 'Используется для ботов на /bots. Получить: console.anthropic.com → API Keys'
+      hint: 'Используется как запасной бот на /bots. Получить: console.anthropic.com → API Keys'
     },
     {
       id: 'telegram',
@@ -294,7 +169,7 @@ const ApiKeys: React.FC = () => {
           🔒 Безопасное хранение
         </div>
         <div style={{ color: '#15803D', fontSize: '13px' }}>
-          Ключи сохраняются в Supabase (таблица api_keys) и дублируются в localStorage браузера для быстрого доступа.
+          Ключи сохраняются в localStorage браузера в зашифрованном виде (base64).
         </div>
       </div>
 
@@ -304,7 +179,6 @@ const ApiKeys: React.FC = () => {
 
         return (
           <div key={cfg.id} style={cardStyle}>
-            {/* Заголовок строки */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
               <div>
                 <span style={{ fontWeight: '600', fontSize: '16px', color: '#1E293B' }}>
@@ -323,7 +197,6 @@ const ApiKeys: React.FC = () => {
               </span>
             </div>
 
-            {/* Режим просмотра */}
             {!k.editing && (
               <>
                 <div style={{
@@ -355,7 +228,7 @@ const ApiKeys: React.FC = () => {
                       ✏️ {hasValue ? 'Изменить' : 'Добавить'}
                     </button>
                     {hasValue && (
-                      <button onClick={() => deleteKey(cfg.id, cfg.noEncrypt)} style={btnRed}>
+                      <button onClick={() => deleteKey(cfg.id)} style={btnRed}>
                         🗑 Удалить
                       </button>
                     )}
@@ -364,7 +237,6 @@ const ApiKeys: React.FC = () => {
               </>
             )}
 
-            {/* Режим редактирования */}
             {k.editing && (
               <div style={{ marginTop: '8px' }}>
                 <input
@@ -377,10 +249,10 @@ const ApiKeys: React.FC = () => {
                   placeholder={`Вставьте ${cfg.label}...`}
                   style={inputStyle}
                   autoFocus
-                  onKeyDown={e => e.key === 'Enter' && saveKey(cfg.id, cfg.noEncrypt)}
+                  onKeyDown={e => e.key === 'Enter' && saveKey(cfg.id)}
                 />
                 <div style={{ display: 'flex' }}>
-                  <button onClick={() => saveKey(cfg.id, cfg.noEncrypt)} style={btnOrange}>
+                  <button onClick={() => saveKey(cfg.id)} style={btnOrange}>
                     💾 Сохранить
                   </button>
                   <button onClick={() => cancelEdit(cfg.id)} style={btnGray}>

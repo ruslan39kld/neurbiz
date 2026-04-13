@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { projects as defaultProjects, vkEmbedUrl } from '../data';
-import { getSupabaseClient } from '../services/supabaseClient';
 
 import SectionTitle from './SectionTitle';
 
@@ -26,49 +25,36 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
         } catch {}
       }
 
-      // Try Supabase
-      const supabase = await getSupabaseClient();
-      if (supabase) {
-        const { data, error } = await supabase
-          .from('projects')
-          .select('*')
-          .order('year', { ascending: false })
-          .order('created_at', { ascending: false });
-        if (!error && data && data.length > 0) {
-          // Merge with defaultProjects to fill in any missing rich fields (imageUrl, videoUrl, etc.)
-          const merged = data.map((savedItem: any) => {
-            const def = defaultProjects.find(d => d.title === savedItem.title);
-            if (def) {
-              const mergedItem = { ...def, ...savedItem };
-              if (!savedItem.imageUrl) mergedItem.imageUrl = def.imageUrl;
-              if (!savedItem.videoUrl) mergedItem.videoUrl = def.videoUrl;
-              if (!savedItem.liveUrl) mergedItem.liveUrl = def.liveUrl;
-              return mergedItem;
-            }
-            return savedItem;
-          });
-          setProjectsData(merged);
-          sessionStorage.setItem('cache_projects', JSON.stringify(merged));
-          return;
-        }
+      // Admin edits stored in localStorage take priority
+      const adminSaved = localStorage.getItem('portfolio_projects');
+      if (adminSaved) {
+        try {
+          const parsed = JSON.parse(adminSaved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setProjectsData(parsed);
+            sessionStorage.setItem('cache_projects', JSON.stringify(parsed));
+            return;
+          }
+        } catch {}
       }
-      // Fallback: src/data.ts (defaultProjects already set as initial state)
+
+      // Fetch from static JSON file
+      try {
+        const res = await fetch('/data/projects.json');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setProjectsData(data);
+            sessionStorage.setItem('cache_projects', JSON.stringify(data));
+            return;
+          }
+        }
+      } catch {}
+
+      // Final fallback: hardcoded defaults from src/data.ts
     };
 
     loadProjects();
-
-    const supabase = getSupabaseClient();
-    if (!supabase) return;
-
-    const channel = supabase
-      .channel('projects-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, () => {
-        sessionStorage.removeItem('cache_projects');
-        loadProjects();
-      })
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
   }, []);
 
   useEffect(() => {
