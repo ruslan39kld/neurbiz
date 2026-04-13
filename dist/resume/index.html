@@ -143,7 +143,7 @@
     #hero {
       min-height: 100vh;
       display: flex; align-items: center;
-      padding: 80px 24px 48px;
+      padding: 140px 24px 48px;
       position: relative; overflow: hidden;
     }
     .hero-grid {
@@ -299,9 +299,10 @@
     #timeline { padding:96px 24px; }
     .timeline-wrap { position:relative; }
     .timeline-line {
-      position:absolute; left:0;
-      top:0; bottom:0; width:1px;
-      background: linear-gradient(to bottom, var(--accent), var(--secondary), rgba(255,107,53,0.2));
+      position:absolute; left:16px;
+      top:0; bottom:0; width:2px;
+      background: linear-gradient(to bottom, var(--accent), var(--secondary), rgba(255,107,53,0.3));
+      z-index:1;
     }
     @media(min-width:768px){
       .timeline-line { left:50%; transform:translateX(-50%); }
@@ -313,7 +314,7 @@
 
     .timeline-dot {
       position:absolute;
-      left:-6px;
+      left:10px;
       width:12px; height:12px;
       border-radius:50%;
       background:var(--secondary); z-index:20;
@@ -335,7 +336,7 @@
     }
 
     .timeline-content {
-      width:100%; padding-left:24px;
+      width:100%; padding-left:40px;
       opacity:0;
       transition: opacity 0.5s, transform 0.5s;
     }
@@ -601,9 +602,58 @@
     @media(max-width:768px) {
       .contacts-info { flex-direction:column; gap:16px; }
     }
+
+    /* ===== TOP NAV BAR ===== */
+    .top-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--slate-200);
+      padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.08);
+    }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px;
+      background: rgba(255,107,53,0.08);
+      border: 1.5px solid rgba(255,107,53,0.25);
+      color: var(--accent);
+      border-radius: 10px;
+      font-weight: 700; font-size: 14px;
+      font-family: var(--font-display);
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-back:hover { background: rgba(255,107,53,0.18); transform: translateX(-2px); }
+    .btn-nav-close {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px;
+      background: var(--slate-100);
+      border: 1.5px solid var(--slate-200);
+      color: var(--slate-600);
+      border-radius: 10px;
+      font-weight: 700; font-size: 14px;
+      font-family: var(--font-display);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-nav-close:hover { background: var(--slate-200); color: var(--slate-900); }
+    @media(max-width:480px) {
+      .btn-back { font-size: 12px; padding: 8px 14px; }
+      .btn-nav-close { font-size: 12px; padding: 8px 14px; }
+    }
   </style>
 </head>
 <body>
+
+<!-- ===== TOP NAV BAR ===== -->
+<nav class="top-nav">
+  <a href="/" class="btn-back">← Вернуться в портфолио</a>
+  <button class="btn-nav-close" onclick="window.close()">Закрыть ✕</button>
+</nav>
 
 <!-- ===== PARTICLES ===== -->
 <canvas id="particles-canvas"></canvas>
@@ -751,120 +801,220 @@
       <div class="timeline-line"></div>
       <div class="timeline-items" id="timeline-list">
 
-        <div class="timeline-item">
+        <!-- 1. ГКУ МО РЦТ — текущая должность -->
+        <div class="timeline-item current">
           <div class="timeline-dot active"></div>
           <div class="timeline-content">
             <div class="glass-card timeline-card active">
-              <div class="timeline-year">2025 — н.в.</div>
-              <h3 class="timeline-role">Заместитель начальника управления — Начальник отдела цифровой трансформации</h3>
+              <div class="timeline-year">Август 2025 — настоящее время</div>
+              <h3 class="timeline-role">Заместитель начальника управления — начальник отдела цифровой трансформации</h3>
               <a class="timeline-company" href="https://rctmo.mosreg.ru" target="_blank" rel="noopener noreferrer">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 ГКУ МО «РЦТ»
               </a>
               <ul class="timeline-achievements">
-                <li><span class="bullet">•</span> Создал AI-направление с нуля на базе Vibe Coding методологии</li>
-                <li><span class="bullet">•</span> Запустил 10+ AI-проектов в production (neurbiz.ru)</li>
-                <li><span class="bullet">•</span> Управляю командой бизнес-аналитиков</li>
-                <li><span class="bullet">•</span> Оптимизировал бизнес-процессы через AI (эффективность +40%)</li>
+                <li><span class="bullet">•</span> Управление командой бизнес-аналитиков: организация работы, контроль качества</li>
+                <li><span class="bullet">•</span> Детальная проработка закупочных процессов на ЕАСУЗ с применением BPMN</li>
+                <li><span class="bullet">•</span> Создание AI-направления на базе Vibe Coding</li>
+                <li><span class="bullet">•</span> Комплексный анализ бизнес-процессов для интеграции AI</li>
+                <li><span class="bullet">•</span> Разработка 10+ AI-проектов: чат-боты, веб-приложения, деплой (neurbiz.ru)</li>
+                <li><span class="bullet">•</span> Оптимизация процессов через AI-технологии, рост эффективности</li>
               </ul>
               <div class="timeline-stack-wrap">
                 <span class="timeline-stack-label">Стек: </span>
-                <span class="timeline-stack-val">Python • Vibe Coding • BPMN • AI Integration</span>
+                <span class="timeline-stack-val">Python • Vibe Coding • BPMN • AI Integration • ChatGPT • Claude API • ЕАСУЗ</span>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- 2. АО МСУ-1 -->
         <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-content">
             <div class="glass-card timeline-card">
-              <div class="timeline-year">2022 — 2025</div>
-              <h3 class="timeline-role">Senior Project Manager</h3>
+              <div class="timeline-year">Октябрь 2022 — Август 2025</div>
+              <h3 class="timeline-role">Senior Project Manager (Менеджер-аналитик проектов)</h3>
               <a class="timeline-company" href="https://mcy-1.ru" target="_blank" rel="noopener noreferrer">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 АО «МСУ-1»
               </a>
               <ul class="timeline-achievements">
-                <li><span class="bullet">•</span> Развил новое направление экологического строительства</li>
-                <li><span class="bullet">•</span> Интегрировал процессы между подразделениями</li>
-                <li><span class="bullet">•</span> Организовал интеграцию IT-систем (MS Project + Power BI)</li>
-                <li><span class="bullet">•</span> Выстроил систему проектного контроллинга</li>
+                <li><span class="bullet">•</span> Развитие экологического строительства, координация 10+ подрядчиков</li>
+                <li><span class="bullet">•</span> Анализ и оптимизация бизнес-процессов между подразделениями</li>
+                <li><span class="bullet">•</span> Интеграция IT-систем: MS Project + Power BI, автоматизация аналитики</li>
+                <li><span class="bullet">•</span> Создание календарно-сетевых графиков для экостроительства</li>
+                <li><span class="bullet">•</span> Проектный контроллинг и анализ отклонений</li>
+                <li><span class="bullet">•</span> Бюджетный анализ в Power BI, распределение затрат</li>
+                <li><span class="bullet">•</span> Оптимизация работы с подрядчиками, внедрение KPI</li>
               </ul>
               <div class="timeline-stack-wrap">
                 <span class="timeline-stack-label">Стек: </span>
-                <span class="timeline-stack-val">MS Project • Power BI • Process Integration</span>
+                <span class="timeline-stack-val">MS Project • Power BI • Excel • BPMN • KPI • Process Integration</span>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- 3. ООО Стройинжсервис-2 -->
         <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-content">
             <div class="glass-card timeline-card">
-              <div class="timeline-year">2021 — 2022</div>
-              <h3 class="timeline-role">Менеджер проектов по автоматизации</h3>
-              <a class="timeline-company" href="https://sis-2.ru" target="_blank" rel="noopener noreferrer">
+              <div class="timeline-year">Май 2021 — Октябрь 2022</div>
+              <h3 class="timeline-role">Менеджер проектов по автоматизации бизнес-процессов</h3>
+              <a class="timeline-company" href="#" target="_blank" rel="noopener noreferrer">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 ООО «Стройинжсервис-2»
               </a>
               <ul class="timeline-achievements">
-                <li><span class="bullet">•</span> Создал методологическую базу проектного управления с нуля</li>
-                <li><span class="bullet">•</span> Провел комплексный анализ всех бизнес-процессов</li>
-                <li><span class="bullet">•</span> Внедрил систему календарно-сетевого планирования</li>
-                <li><span class="bullet">•</span> Организовал систему мониторинга и отчетности</li>
+                <li><span class="bullet">•</span> Создание методологической базы проектного управления</li>
+                <li><span class="bullet">•</span> Комплексный анализ всех бизнес-процессов предприятия</li>
+                <li><span class="bullet">•</span> Пошаговые инструкции процессов, создание шаблонов</li>
+                <li><span class="bullet">•</span> Календарно-сетевое планирование с иерархической структурой</li>
+                <li><span class="bullet">•</span> Система аналитики и мониторинга выполнения работ</li>
+                <li><span class="bullet">•</span> Еженедельная отчетность руководству и застройщику (АО «МСУ-1»)</li>
+                <li><span class="bullet">•</span> Бюджетное планирование и контроль</li>
+                <li><span class="bullet">•</span> Создание единой системы управленческого учета</li>
               </ul>
               <div class="timeline-stack-wrap">
                 <span class="timeline-stack-label">Стек: </span>
-                <span class="timeline-stack-val">Project Management • Process Optimization</span>
+                <span class="timeline-stack-val">MS Project • Excel • WBS • Process Automation • Управленческий учёт</span>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- 4. АО ЦНИРТИ -->
         <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-content">
             <div class="glass-card timeline-card">
-              <div class="timeline-year">2018 — 2021</div>
+              <div class="timeline-year">Октябрь 2018 — Май 2021</div>
               <h3 class="timeline-role">Менеджер проектов НИОКР, ГОЗ</h3>
               <a class="timeline-company" href="https://цнирти.рф" target="_blank" rel="noopener noreferrer">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                АО «ЦНИРТИ им. академика А.И. Берга»
+                АО «ЦНИРТИ им. А.И. Берга»
               </a>
               <ul class="timeline-achievements">
-                <li><span class="bullet">•</span> Управлял государственными проектами оборонного заказа</li>
-                <li><span class="bullet">•</span> Внедрял проектное управление на предприятии</li>
-                <li><span class="bullet">•</span> Выстроил календарно-сетевое планирование</li>
-                <li><span class="bullet">•</span> Внедрил систему риск-менеджмента</li>
+                <li><span class="bullet">•</span> Управление государственными оборонными заказами (ГОЗ и НИОКР)</li>
+                <li><span class="bullet">•</span> Производственное планирование, анализ мощностей</li>
+                <li><span class="bullet">•</span> Внедрение проектного управления на базе MS Project</li>
+                <li><span class="bullet">•</span> Создание регламентов СМК, адаптация под отрасль</li>
+                <li><span class="bullet">•</span> Календарно-сетевое планирование многоэтапных проектов</li>
+                <li><span class="bullet">•</span> Разработка KPI и метрик, анализ отклонений, отчетность</li>
+                <li><span class="bullet">•</span> Управление закупками и кооперацией, работа с поставщиками</li>
+                <li><span class="bullet">•</span> Координация технических отделов, межфункциональное взаимодействие</li>
+                <li><span class="bullet">•</span> Внедрение системы риск-менеджмента</li>
               </ul>
               <div class="timeline-stack-wrap">
                 <span class="timeline-stack-label">Стек: </span>
-                <span class="timeline-stack-val">MS Project • Risk Management • Government Contracts</span>
+                <span class="timeline-stack-val">MS Project • СМК • KPI • Risk Management • ГОЗ • НИОКР</span>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- 5. ОАО Балткран -->
         <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-content">
             <div class="glass-card timeline-card">
-              <div class="timeline-year">2016 — 2018</div>
+              <div class="timeline-year">Май 2016 — Август 2018</div>
               <h3 class="timeline-role">Менеджер по производству</h3>
               <a class="timeline-company" href="https://baltkran.ru" target="_blank" rel="noopener noreferrer">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 ОАО «Балткран»
               </a>
               <ul class="timeline-achievements">
-                <li><span class="bullet">•</span> Производственное планирование и контроль</li>
-                <li><span class="bullet">•</span> Анализ производственной деятельности</li>
+                <li><span class="bullet">•</span> Производственное планирование и контроль ГПР</li>
+                <li><span class="bullet">•</span> Контроль производственных планов цехов, соблюдение договоров</li>
+                <li><span class="bullet">•</span> Анализ производственной деятельности, еженедельная отчетность</li>
                 <li><span class="bullet">•</span> Координация производственных подразделений</li>
+                <li><span class="bullet">•</span> Контроль снабжения сырьем, материалами, оборудованием</li>
+                <li><span class="bullet">•</span> Организация логистики: погрузка, разгрузка, перемещение материалов</li>
               </ul>
               <div class="timeline-stack-wrap">
                 <span class="timeline-stack-label">Стек: </span>
-                <span class="timeline-stack-val">Production Planning • Manufacturing</span>
+                <span class="timeline-stack-val">Production Planning • Manufacturing • Logistics • Excel</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. PR-media Group -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="glass-card timeline-card">
+              <div class="timeline-year">Июнь 2014 — Февраль 2016</div>
+              <h3 class="timeline-role">Руководитель веб-студии и маркетинга</h3>
+              <a class="timeline-company" href="#" target="_blank" rel="noopener noreferrer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                PR-media Group
+              </a>
+              <ul class="timeline-achievements">
+                <li><span class="bullet">•</span> Управление IT-проектом: 3D виртуальный туристический путеводитель</li>
+                <li><span class="bullet">•</span> Подготовка технических заданий программистам</li>
+                <li><span class="bullet">•</span> Создание бизнес-плана, ценообразование, план продаж</li>
+                <li><span class="bullet">•</span> Комплексная маркетинговая деятельность: соцсети, журнал, сайты</li>
+                <li><span class="bullet">•</span> Поиск альтернативных путей развития в цифровом туризме</li>
+              </ul>
+              <div class="timeline-stack-wrap">
+                <span class="timeline-stack-label">Стек: </span>
+                <span class="timeline-stack-val">Web Development • Digital Marketing • 3D Visualization • Project Management</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. ОАО ПСЗ Янтарь -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="glass-card timeline-card">
+              <div class="timeline-year">Февраль 2011 — Май 2014</div>
+              <h3 class="timeline-role">Диспетчер производства (КДО)</h3>
+              <a class="timeline-company" href="#" target="_blank" rel="noopener noreferrer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                ОАО «Прибалтийский Судостроительный Завод "Янтарь"»
+              </a>
+              <ul class="timeline-achievements">
+                <li><span class="bullet">•</span> Оптимизация производственных процессов судостроения</li>
+                <li><span class="bullet">•</span> Календарные графики загрузки участков, контроль выполнения</li>
+                <li><span class="bullet">•</span> Контроль ресурсного обеспечения: комплектующие, материалы</li>
+                <li><span class="bullet">•</span> Координация логистики на всех объектах судостроения</li>
+                <li><span class="bullet">•</span> Производственная аналитика, отчеты по исполнительности работ</li>
+              </ul>
+              <div class="timeline-stack-wrap">
+                <span class="timeline-stack-label">Стек: </span>
+                <span class="timeline-stack-val">Production Dispatch • Scheduling • Logistics • Shipbuilding</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. ОАО КМС SkyLink -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="glass-card timeline-card">
+              <div class="timeline-year">Март 2006 — Ноябрь 2009</div>
+              <h3 class="timeline-role">Менеджер по развитию дилерской сети</h3>
+              <a class="timeline-company" href="#" target="_blank" rel="noopener noreferrer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                ОАО «Калининградские Мобильные Сети» (SkyLink)
+              </a>
+              <ul class="timeline-achievements">
+                <li><span class="bullet">•</span> Управление дилерской сетью, контроль корпоративных стандартов</li>
+                <li><span class="bullet">•</span> Координация сервисной поддержки и ремонта оборудования</li>
+                <li><span class="bullet">•</span> Аналитика эффективности продаж, еженедельная отчетность</li>
+                <li><span class="bullet">•</span> Стратегическое планирование маркетинговых мероприятий</li>
+                <li><span class="bullet">•</span> Разработка коммерческих предложений и рекламных материалов</li>
+              </ul>
+              <div class="timeline-stack-wrap">
+                <span class="timeline-stack-label">Стек: </span>
+                <span class="timeline-stack-val">Sales Analytics • CRM • Dealer Management • Marketing</span>
               </div>
             </div>
           </div>
