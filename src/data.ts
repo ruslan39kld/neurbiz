@@ -1,10 +1,10 @@
 export const IMAGES = {
-  photo: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/photo1.jpg',
-  hero: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/hero.png',
-  stack: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/stack.JPG',
-  vazno: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/vazno.JPG',
-  perviiMir: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/pervii%20mir.png',
-  vtoriMir: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/vtori%20mir.png',
+  photo: '/images/projects/photo1.jpg',
+  hero: '/images/projects/hero.png',
+  stack: '/images/projects/stack.JPG',
+  vazno: '/images/projects/vazno.JPG',
+  perviiMir: '/images/projects/pervii mir.png',
+  vtoriMir: '/images/projects/vtori mir.png',
 };
 
 export const VIDEOS = {
@@ -27,7 +27,7 @@ export const projects = [
     result: 'Контроль 100% рабочего времени в реальном времени',
     year: 2025, 
     role: 'Разработчик',
-    imageUrl: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/PBI%20udalenka.png', 
+    imageUrl: '/images/projects/PBI udalenka.png',
     videoUrl: 'https://vkvideo.ru/video-236823442_456239026', 
     demo_url: '',
     liveUrl: 'https://clck.ru/3SaMQs',
@@ -46,7 +46,7 @@ export const projects = [
     result: 'Точность ответов 85–95% по 4854 документам',
     year: 2025, 
     role: 'Разработчик',
-    imageUrl: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20konsultant.png', 
+    imageUrl: '/images/projects/ai konsultant.png',
     videoUrl: 'https://vkvideo.ru/video-236823442_456239025', 
     demo_url: '',
     liveUrl: '',
@@ -65,7 +65,7 @@ export const projects = [
     result: '3000+ объявлений, точность 95%',
     year: 2025, 
     role: 'Разработчик',
-    imageUrl: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20parser.png', 
+    imageUrl: '/images/projects/ai parser.png',
     videoUrl: 'https://vkvideo.ru/video-236823442_456239021', 
     demo_url: '',
     liveUrl: '',
@@ -84,7 +84,7 @@ export const projects = [
     result: '✅ 3 курса, 61 урок, 183 теста',
     year: 2025, 
     role: 'Разработчик',
-    imageUrl: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20inzhener.png', 
+    imageUrl: '/images/projects/ai inzhener.png',
     videoUrl: 'https://vkvideo.ru/video-236823442_456239019', 
     demo_url: '',
     liveUrl: 'https://web.telegram.org/a/#8154806722',
@@ -111,7 +111,7 @@ export const projects = [
     result: 'Отправка за 3–5 сек, продакшен на Amvera',
     year: 2026, 
     role: 'Разработчик',
-    imageUrl: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/Cenrt_opov_Telegram.png', 
+    imageUrl: '/images/projects/Cenrt_opov_Telegram.png',
     videoUrl: 'https://vkvideo.ru/video-236823442_456239023', 
     demo_url: '',
     liveUrl: 'https://centr-opovesesnij-zaichkovv.amvera.io/',
@@ -130,7 +130,7 @@ export const projects = [
     result: 'Полная визуализация процессов',
     year: 2026, 
     role: 'Разработчик',
-    imageUrl: 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/dwuinik.png', 
+    imageUrl: '/images/projects/dwuinik.png',
     videoUrl: 'https://vkvideo.ru/video-236823442_456239024', 
     demo_url: '',
     liveUrl: 'https://cifrovoj-dvojnik-zaichkovv.amvera.io',
@@ -143,7 +143,7 @@ export const projects = [
   }
 ];
 
-const BASE_CERT_URL = 'https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/';
+const BASE_CERT_URL = '/images/projects/';
 
 export const certificates = [
   { id:1, title:'AI/ML-разработчик', org:'ООО «Терра ЭйАй» / University of Artificial Intelligence', year:'2024–2025', category:'AI/ML', image:'', cert_url: `${BASE_CERT_URL}cert_01_aiml_developer.pdf.pdf` },
