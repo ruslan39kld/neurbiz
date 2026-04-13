@@ -13,3 +13,4 @@ run:
   persistenceMount: /data
   containerPort: "3001"
   servicePort: "80"
+  nodeArguments: ""  # ← ДОБАВЬТЕ ЭТУ СТРОКУ
