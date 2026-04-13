@@ -3,16 +3,15 @@ meta:
   toolchain:
     name: npm
     version: "20"
+
 build:
   skip: false
-  additionalCommands: null
-  artifacts:
-    "*": /
+  additionalCommands:
+    - npm install
+    - npm run build
+
 run:
-  scriptName: null
-  scriptArguments: null
-  nodeArguments: null
-  command: npm run start
+  command: node server.ts
   persistenceMount: /data
   containerPort: "3001"
   servicePort: "80"
