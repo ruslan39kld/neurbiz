@@ -5,13 +5,10 @@ meta:
     version: "20"
 build:
   skip: false
-  additionalCommands: null
-  artifacts:
-    "*": /
+  additionalCommands:
+    - npm install
+    - npm run build
 run:
-  scriptName: null
-  scriptArguments: null
-  nodeArguments: null
   command: npm run start
   persistenceMount: /data
   containerPort: "3001"
