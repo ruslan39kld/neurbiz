@@ -1,0 +1,21 @@
+meta:
+  environment: nodejs
+  toolchain:
+    name: npm
+    version: "20"
+build:
+  skip: false
+  additionalCommands:
+    - rm -rf node_modules .cache dist
+    - npm install
+    - npm run build
+  artifacts:
+    "": ""
+run:
+  persistenceMount: /data
+  scriptName: null
+  scriptArguments: null
+  nodeArguments: null
+  command: node server.ts
+  containerPort: 80
+  servicePort: 80

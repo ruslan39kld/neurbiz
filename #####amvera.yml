@@ -6,13 +6,11 @@ meta:
 build:
   skip: false
   additionalCommands: npm ci
-  artifacts:
-    "*": /
 run:
+  persistenceMount: /data
   scriptName: null
   scriptArguments: null
   nodeArguments: null
   command: npx tsx server.ts
-  persistenceMount: /data
   containerPort: "3001"
   servicePort: "80"
