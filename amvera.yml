@@ -3,16 +3,17 @@ meta:
   toolchain:
     name: npm
     version: "20"
+
 build:
   skip: false
-  additionalCommands: npm ci
+  additionalCommands: null
   artifacts:
     "*": /
 run:
   scriptName: null
   scriptArguments: null
   nodeArguments: null
-  command: npx tsx server.ts
+  command: npm run start
   persistenceMount: /data
   containerPort: "3001"
   servicePort: "80"
