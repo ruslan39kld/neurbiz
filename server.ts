@@ -4,7 +4,6 @@ import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { config } from 'dotenv';
-import { createClient } from '@supabase/supabase-js';
 import nodemailer from 'nodemailer';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -14,25 +13,6 @@ config();
 const app = express();
 const PORT = Number(process.env.PORT) || 3001;
 
-const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
-
-async function getGigaChatKeyFromSupabase(): Promise<string | null> {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
-  try {
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const { data, error } = await supabase
-      .from('api_keys')
-      .select('key_value')
-      .eq('key_name', 'gigachat')
-      .single();
-    if (error || !data) return null;
-    return data.key_value || null;
-  } catch {
-    return null;
-  }
-}
-
 app.use(express.json());
 
 app.use((_req, res, next) => {
@@ -41,14 +21,6 @@ app.use((_req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type, x-gigachat-auth-key');
   if (_req.method === 'OPTIONS') return res.sendStatus(200);
   next();
-});
-
-// GET /api/config — публичные настройки для фронтенда (Supabase credentials)
-app.get('/api/config', (_req, res) => {
-  res.json({
-    supabase_url: process.env.SUPABASE_URL || '',
-    supabase_anon_key: process.env.SUPABASE_ANON_KEY || '',
-  });
 });
 
 const agent = new https.Agent({ rejectUnauthorized: false });
@@ -112,10 +84,7 @@ function httpsPost(url: string, headers: Record<string, string>, body: string): 
 
 // POST /api/gigachat/token — получить access_token (с кешированием на 25 мин)
 app.post('/api/gigachat/token', async (req, res) => {
-  let authKey = (req.headers['x-gigachat-auth-key'] as string) || process.env.GIGACHAT_AUTH_KEY;
-  if (!authKey) {
-    authKey = (await getGigaChatKeyFromSupabase()) || '';
-  }
+  const authKey = (req.headers['x-gigachat-auth-key'] as string) || process.env.GIGACHAT_AUTH_KEY || '';
   if (!authKey) {
     return res.status(500).json({ error: 'GIGACHAT_AUTH_KEY не настроен на сервере' });
   }
@@ -132,10 +101,7 @@ app.post('/api/gigachat/token', async (req, res) => {
 
 // POST /api/gigachat/chat — проксировать запрос к GigaChat (токен получается на сервере)
 app.post('/api/gigachat/chat', async (req, res) => {
-  let authKey = (req.headers['x-gigachat-auth-key'] as string) || process.env.GIGACHAT_AUTH_KEY;
-  if (!authKey) {
-    authKey = (await getGigaChatKeyFromSupabase()) || '';
-  }
+  const authKey = (req.headers['x-gigachat-auth-key'] as string) || process.env.GIGACHAT_AUTH_KEY || '';
   if (!authKey) {
     return res.status(500).json({ error: 'GIGACHAT_AUTH_KEY не настроен на сервере' });
   }
