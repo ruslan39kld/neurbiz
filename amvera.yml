@@ -3,11 +3,14 @@ meta:
   toolchain:
     name: npm
     version: "20"
+
 build:
   skip: false
-  additionalCommands: null
-  artifacts:
-    "*": /
+  additionalCommands: "npm ci"
+
+artifacts:
+  "**": /
+
 run:
   scriptName: null
   scriptArguments: null
