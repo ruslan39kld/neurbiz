@@ -114,7 +114,7 @@ export default function ContactsPage() {
             onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)')}
           >
             <img
-              src="https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/ai%20svyz.jpg"
+              src="/images/contacts/ai-svyz.jpg"
               alt="AI collaboration"
               className="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-105"
               style={{ minHeight: '320px' }}
