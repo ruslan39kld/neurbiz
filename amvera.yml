@@ -6,6 +6,7 @@ meta:
 build:
   skip: false
   additionalCommands:
+    - rm -rf node_modules .cache dist
     - npm install
     - npm run build
   artifacts:
