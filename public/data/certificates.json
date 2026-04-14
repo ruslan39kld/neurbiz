@@ -8,7 +8,7 @@
     "image_url": null,
     "sort_order": 7,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_08_primavera_p6.pdf.pdf",
+    "cert_url": "/images/projects/cert_08_primavera_p6.pdf.pdf",
     "image": ""
   },
   {
@@ -20,7 +20,7 @@
     "image_url": null,
     "sort_order": 3,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_04_digital_literacy.pdf.pdf",
+    "cert_url": "/images/projects/cert_04_digital_literacy.pdf.pdf",
     "image": ""
   },
   {
@@ -32,7 +32,7 @@
     "image_url": null,
     "sort_order": 5,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_06_ms_project.pdf.pdf",
+    "cert_url": "/images/projects/cert_06_ms_project.pdf.pdf",
     "image": ""
   },
   {
@@ -44,7 +44,7 @@
     "image_url": null,
     "sort_order": 17,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_18_neural_business.png.png",
+    "cert_url": "/images/projects/cert_18_neural_business.png.png",
     "image": ""
   },
   {
@@ -56,7 +56,7 @@
     "image_url": null,
     "sort_order": 10,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_11_ba_finance.pdf.pdf",
+    "cert_url": "/images/projects/cert_11_ba_finance.pdf.pdf",
     "image": ""
   },
   {
@@ -68,7 +68,7 @@
     "image_url": null,
     "sort_order": 18,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_19_construction_pm.pdf.pdf",
+    "cert_url": "/images/projects/cert_19_construction_pm.pdf.pdf",
     "image": ""
   },
   {
@@ -80,7 +80,7 @@
     "image_url": null,
     "sort_order": 9,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_10_ai_winter_school.pdf.pdf",
+    "cert_url": "/images/projects/cert_10_ai_winter_school.pdf.pdf",
     "image": ""
   },
   {
@@ -92,7 +92,7 @@
     "image_url": null,
     "sort_order": 13,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_14_ba_project.pdf.pdf",
+    "cert_url": "/images/projects/cert_14_ba_project.pdf.pdf",
     "image": ""
   },
   {
@@ -104,7 +104,7 @@
     "image_url": null,
     "sort_order": 16,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_17_neural_20.png.png",
+    "cert_url": "/images/projects/cert_17_neural_20.png.png",
     "image": ""
   },
   {
@@ -116,7 +116,7 @@
     "image_url": null,
     "sort_order": 0,
     "created_at": "2026-04-02T08:18:22.685816",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_20_CV_School.pdf",
+    "cert_url": "/images/projects/cert_20_CV_School.pdf",
     "image": null
   },
   {
@@ -128,7 +128,7 @@
     "image_url": null,
     "sort_order": 0,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_01_aiml_developer.pdf.pdf",
+    "cert_url": "/images/projects/cert_01_aiml_developer.pdf.pdf",
     "image": ""
   },
   {
@@ -140,7 +140,7 @@
     "image_url": null,
     "sort_order": 1,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_02_gigachat.png.png",
+    "cert_url": "/images/projects/cert_02_gigachat.png.png",
     "image": ""
   },
   {
@@ -152,7 +152,7 @@
     "image_url": null,
     "sort_order": 14,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_15_gratitude_nmits.jpg.jpg",
+    "cert_url": "/images/projects/cert_15_gratitude_nmits.jpg.jpg",
     "image": ""
   },
   {
@@ -164,7 +164,7 @@
     "image_url": null,
     "sort_order": 11,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_12_ba_frameworks.pdf.pdf",
+    "cert_url": "/images/projects/cert_12_ba_frameworks.pdf.pdf",
     "image": ""
   },
   {
@@ -176,7 +176,7 @@
     "image_url": null,
     "sort_order": 15,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_16_gratitude_kartika.jpg.jpg",
+    "cert_url": "/images/projects/cert_16_gratitude_kartika.jpg.jpg",
     "image": ""
   },
   {
@@ -188,7 +188,7 @@
     "image_url": null,
     "sort_order": 4,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_05_ai_agents.png.png",
+    "cert_url": "/images/projects/cert_05_ai_agents.png.png",
     "image": ""
   },
   {
@@ -200,7 +200,7 @@
     "image_url": null,
     "sort_order": 6,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_07_client_centricity.png.png",
+    "cert_url": "/images/projects/cert_07_client_centricity.png.png",
     "image": ""
   },
   {
@@ -212,7 +212,7 @@
     "image_url": null,
     "sort_order": 12,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_13_ba_strategy.pdf.pdf",
+    "cert_url": "/images/projects/cert_13_ba_strategy.pdf.pdf",
     "image": ""
   },
   {
@@ -224,7 +224,7 @@
     "image_url": null,
     "sort_order": 8,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_09_power_bi.jpg.jpg",
+    "cert_url": "/images/projects/cert_09_power_bi.jpg.jpg",
     "image": ""
   },
   {
@@ -236,7 +236,7 @@
     "image_url": null,
     "sort_order": 2,
     "created_at": "2026-04-01T08:23:54.938444",
-    "cert_url": "https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/cert_03_generative_art.png.png",
+    "cert_url": "/images/projects/cert_03_generative_art.png.png",
     "image": ""
   }
 ]
