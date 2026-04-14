@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скачать все файлы из Supabase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .stats {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .stats p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .progress {
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 5px;
+            display: none;
+        }
+        .file-list {
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .file-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .error {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Скачать ВСЕ файлы из Supabase</h1>
+        
+        <div class="stats">
+            <p><strong>📊 Статистика:</strong></p>
+            <p id="stats">Загрузка данных...</p>
+        </div>
+
+        <button id="downloadBtn" onclick="downloadAll()">📥 СКАЧАТЬ ВСЕ ФАЙЛЫ</button>
+        <button onclick="showFiles()">👁️ Показать список файлов</button>
+
+        <div class="progress" id="progress">
+            <p id="progressText">Скачивание: 0 / 0</p>
+        </div>
+
+        <div class="file-list" id="fileList" style="display: none;">
+            <h3>Список файлов:</h3>
+            <div id="fileListContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let allFiles = [];
+        let projects = [];
+        let certificates = [];
+
+        async function loadData() {
+            try {
+                const projectsRes = await fetch('exported_data/projects.json');
+                projects = await projectsRes.json();
+
+                const certsRes = await fetch('exported_data/certificates.json');
+                certificates = await certsRes.json();
+
+                allFiles = [];
+
+                projects.forEach(p => {
+                    if (p.imageUrl) {
+                        const filename = p.imageUrl.replace('/images/projects/', '');
+                        allFiles.push({
+                            url: `https://fszyqkfwggdcmuywtzhp.supabase.co/storage/v1/object/public/portfolio/${filename}`,
+                            filename: filename,
+                            type: 'project'
+                        });
+                    }
+                });
+
+                certificates.forEach(c => {
+                    if (c.cert_url) {
+                        const filename = c.cert_url.split('/').pop();
+                        allFiles.push({
+                            url: c.cert_url,
+                            filename: filename,
+                            type: 'certificate'
+                        });
+                    }
+                });
+
+                allFiles = Array.from(new Map(allFiles.map(item => [item.filename, item])).values());
+
+                updateStats();
+            } catch (error) {
+                document.getElementById('stats').innerHTML = `<span class="error">❌ Ошибка загрузки: ${error.message}</span>`;
+            }
+        }
+
+        function updateStats() {
+            const projectImages = allFiles.filter(f => f.type === 'project').length;
+            const certFiles = allFiles.filter(f => f.type === 'certificate').length;
+
+            document.getElementById('stats').innerHTML = `
+                <p>✅ Проекты: ${projects.length}</p>
+                <p>✅ Сертификаты: ${certificates.length}</p>
+                <p>📁 Файлов для скачивания: ${allFiles.length}</p>
+                <p>   - Изображения проектов: ${projectImages}</p>
+                <p>   - Файлы сертификатов: ${certFiles}</p>
+            `;
+        }
+
+        function showFiles() {
+            const list = document.getElementById('fileList');
+            const content = document.getElementById('fileListContent');
+            
+            if (list.style.display === 'none') {
+                list.style.display = 'block';
+                let html = '';
+                allFiles.forEach((f, i) => {
+                    html += `<div class="file-item">${i + 1}. ${f.filename} (${f.type})</div>`;
+                });
+                content.innerHTML = html;
+            } else {
+                list.style.display = 'none';
+            }
+        }
+
+        async function downloadAll() {
+            const btn = document.getElementById('downloadBtn');
+            const progress = document.getElementById('progress');
+            const progressText = document.getElementById('progressText');
+
+            btn.disabled = true;
+            progress.style.display = 'block';
+
+            let downloaded = 0;
+
+            for (let i = 0; i < allFiles.length; i++) {
+                const file = allFiles[i];
+                progressText.innerHTML = `⏳ Скачивание: ${i + 1} / ${allFiles.length}<br>📄 ${file.filename}`;
+
+                try {
+                    const a = document.createElement('a');
+                    a.href = file.url;
+                    a.download = file.filename;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+
+                    downloaded++;
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                } catch (error) {
+                    console.error(`Ошибка скачивания ${file.filename}:`, error);
+                }
+            }
+
+            progressText.innerHTML = `<span class="success">✅ Скачано: ${downloaded} / ${allFiles.length} файлов!</span>`;
+            btn.disabled = false;
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
