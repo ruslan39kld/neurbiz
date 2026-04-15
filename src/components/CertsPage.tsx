@@ -155,7 +155,7 @@ export default function CertsPage() {
                       isPdf(cert.cert_url) ? (
                         <div className="w-full h-full relative cursor-pointer" onClick={() => handleOpenCert(cert)}>
                           <iframe 
-                            src={`https://docs.google.com/viewer?url=${encodeURIComponent(cert.cert_url)}&embedded=true`} 
+                            src={`https://docs.google.com/viewer?url=${encodeURIComponent(window.location.origin + cert.cert_url)}&embedded=true`}
                             className="w-full h-full border-none rounded-[8px] pointer-events-none"
                             title={cert.title}
                           />
@@ -237,7 +237,7 @@ export default function CertsPage() {
               ) : selectedCert.cert_url ? (
                 isPdf(selectedCert.cert_url) ? (
                   <iframe 
-                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(selectedCert.cert_url)}&embedded=true`} 
+                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(window.location.origin + selectedCert.cert_url)}&embedded=true`}
                     className="w-full h-full border-none"
                     title={selectedCert.title}
                     onError={() => setLoadError(true)}
