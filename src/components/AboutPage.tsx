@@ -14,38 +14,46 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
   const [projectCount, setProjectCount] = useState(defaultProjects.length);
 
   useEffect(() => {
-    const updateCounts = () => {
-      const savedCerts = localStorage.getItem('portfolio_certificates');
-      if (savedCerts) {
-        try {
-          const parsed = JSON.parse(savedCerts);
-          if (Array.isArray(parsed)) setCertCount(parsed.length);
-        } catch (e) {
-          console.error('Failed to parse certificates from localStorage', e);
+    // Fetch counts from JSON — canonical source, not localStorage which may be stale
+    const updateCounts = async () => {
+      try {
+        const [projRes, certRes] = await Promise.all([
+          fetch('/data/projects.json'),
+          fetch('/data/certificates.json'),
+        ]);
+        if (projRes.ok) {
+          const data = await projRes.json();
+          if (Array.isArray(data) && data.length > 0) setProjectCount(data.length);
         }
-      }
-
-      const savedProjects = localStorage.getItem('portfolio_projects');
-      if (savedProjects) {
-        try {
-          const parsed = JSON.parse(savedProjects);
-          if (Array.isArray(parsed)) setProjectCount(parsed.length);
-        } catch (e) {
-          console.error('Failed to parse projects from localStorage', e);
+        if (certRes.ok) {
+          const data = await certRes.json();
+          if (Array.isArray(data) && data.length > 0) setCertCount(data.length);
         }
+      } catch {
+        // Fallback to localStorage if fetch fails (offline / server error)
+        try {
+          const savedCerts = localStorage.getItem('portfolio_certificates');
+          if (savedCerts) {
+            const parsed = JSON.parse(savedCerts);
+            if (Array.isArray(parsed)) setCertCount(parsed.length);
+          }
+        } catch {}
+        try {
+          const savedProjects = localStorage.getItem('portfolio_projects');
+          if (savedProjects) {
+            const parsed = JSON.parse(savedProjects);
+            if (Array.isArray(parsed)) setProjectCount(parsed.length);
+          }
+        } catch {}
       }
     };
 
     updateCounts();
-    window.addEventListener('storage', updateCounts);
-    window.addEventListener('focus', updateCounts);
 
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setVideoModalOpen(false); };
     document.addEventListener('keydown', handler);
     return () => {
       document.removeEventListener('keydown', handler);
-      window.removeEventListener('storage', updateCounts);
-      window.removeEventListener('focus', updateCounts);
     };
   }, []);
 

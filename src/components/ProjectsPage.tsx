@@ -25,7 +25,22 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
         } catch {}
       }
 
-      // Admin edits stored in localStorage take priority
+      // Fetch from static JSON file — canonical source, always preferred over localStorage
+      try {
+        const res = await fetch('/data/projects.json');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setProjectsData(data);
+            sessionStorage.setItem('cache_projects', JSON.stringify(data));
+            // Keep localStorage in sync so admin panel and AboutPage see fresh data
+            localStorage.setItem('portfolio_projects', JSON.stringify(data));
+            return;
+          }
+        }
+      } catch {}
+
+      // Fallback to localStorage if JSON fetch fails (offline / server error)
       const adminSaved = localStorage.getItem('portfolio_projects');
       if (adminSaved) {
         try {
@@ -37,19 +52,6 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
           }
         } catch {}
       }
-
-      // Fetch from static JSON file
-      try {
-        const res = await fetch('/data/projects.json');
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setProjectsData(data);
-            sessionStorage.setItem('cache_projects', JSON.stringify(data));
-            return;
-          }
-        }
-      } catch {}
 
       // Final fallback: hardcoded defaults from src/data.ts
     };
