@@ -4,6 +4,21 @@ import { projects as defaultProjects, vkEmbedUrl } from '../data';
 
 import SectionTitle from './SectionTitle';
 
+// Helper function to normalize image paths (replace spaces with underscores)
+const normalizeImagePath = (path: string): string => {
+  if (!path) return path;
+  return path.replace(/ /g, '_');
+};
+
+// Helper function to normalize all project image URLs
+const normalizeProjectImages = (project: any): any => {
+  return {
+    ...project,
+    imageUrl: normalizeImagePath(project.imageUrl),
+    images: project.images?.map((img: string) => normalizeImagePath(img)) || []
+  };
+};
+
 export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: string) => void }) {
   const [filter, setFilter] = useState('Все');
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,7 +34,9 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
         try {
           const parsed = JSON.parse(cached);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setProjectsData(parsed);
+            // Normalize image paths in cached data
+            const normalized = parsed.map(normalizeProjectImages);
+            setProjectsData(normalized);
             return;
           }
         } catch {}
@@ -31,10 +48,12 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
-            setProjectsData(data);
-            sessionStorage.setItem('cache_projects', JSON.stringify(data));
+            // Normalize image paths (replace spaces with underscores)
+            const normalizedData = data.map(normalizeProjectImages);
+            setProjectsData(normalizedData);
+            sessionStorage.setItem('cache_projects', JSON.stringify(normalizedData));
             // Keep localStorage in sync so admin panel and AboutPage see fresh data
-            localStorage.setItem('portfolio_projects', JSON.stringify(data));
+            localStorage.setItem('portfolio_projects', JSON.stringify(normalizedData));
             return;
           }
         }
@@ -46,8 +65,10 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
         try {
           const parsed = JSON.parse(adminSaved);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setProjectsData(parsed);
-            sessionStorage.setItem('cache_projects', JSON.stringify(parsed));
+            // Normalize image paths in localStorage data
+            const normalized = parsed.map(normalizeProjectImages);
+            setProjectsData(normalized);
+            sessionStorage.setItem('cache_projects', JSON.stringify(normalized));
             return;
           }
         } catch {}
@@ -389,7 +410,7 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
                       </h3>
                       <ul className="flex flex-col">
                         {(Array.isArray(selectedProject.tasks) && selectedProject.tasks.length > 0 ? selectedProject.tasks : Array.isArray(selectedProject.whatDone) && selectedProject.whatDone.length > 0 ? selectedProject.whatDone : selectedProject.detail.split('. ').filter((s: string) => s.trim().length > 0)).map((point: string, i: number) => (
-                          <li key={i} className="flex items-start gap-3 py-2.5 border-b border-[#F0F0F0] text-[14px] text-[#2A2A2A] leading-[1.5]">
+                          <li key={i} className="flex items-start gap-3 py-2.5 border-b border-[#F0F0F0] text-[14px] text-[#2A2A3A] leading-[1.5]">
                             <span className="shrink-0">✅</span>
                             <span>{point.trim()}{point.endsWith('.') || point.includes('✅') ? '' : '.'}</span>
                           </li>

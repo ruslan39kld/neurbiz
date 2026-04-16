@@ -221,7 +221,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
               >
                 <div className="w-full mb-6 overflow-hidden rounded-[8px]" style={{ aspectRatio: '1 / 1' }}>
                   <img
-                    src="/images/regulation/ai-logika.jpg"
+                    src="/images/projects/ai_logika.JPG"
                     alt="AI-Логика проекта"
                     className="w-full h-full object-cover object-top"
                   />
@@ -259,7 +259,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
               >
                 <div className="w-full mb-6 overflow-hidden rounded-[8px]" style={{ aspectRatio: '1 / 1' }}>
                   <img
-                    src="/images/regulation/ai-bezopasnost.jpg"
+                    src="/images/projects/ai_bezopasnost.jpg"
                     alt="Безопасность продукта"
                     className="w-full h-full object-cover object-top"
                   />
@@ -313,7 +313,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
               >
                 <div className="w-full md:w-[40%] h-[200px] md:h-auto shrink-0 overflow-hidden">
                   <img
-                    src="/images/regulation/vnedrenie-1.jpg"
+                    src="/images/projects/vnedrenie_1.JPG"
                     alt="Порядок в процессах"
                     className="w-full h-full object-cover object-top"
                   />
@@ -340,7 +340,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
               >
                 <div className="w-full md:w-[40%] h-[200px] md:h-auto shrink-0 overflow-hidden">
                   <img
-                    src="/images/regulation/vnedrenie-2.jpg"
+                    src="/images/projects/vnedrenie_2.JPG"
                     alt="Единая структура предприятия"
                     className="w-full h-full object-cover object-top"
                   />
@@ -367,7 +367,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
               >
                 <div className="w-full md:w-[40%] h-[200px] md:h-auto shrink-0 overflow-hidden">
                   <img
-                    src="/images/regulation/vnedrenie-3.jpg"
+                    src="/images/projects/vnedrenie_3.JPG"
                     alt="Скорость и экономия"
                     className="w-full h-full object-cover object-top"
                   />
