@@ -25,7 +25,7 @@ export default function BotsPage() {
     {
       id: 'consultant',
       icon: '🧠',
-      image: '/images/bots/bot1.jpg',
+      image: '/images/projects/ai bot1.JPG',
       name: 'AI Консультант',
       subtitle: 'по нейросетям и промт-инжинирингу',
       description: 'Знает 30+ нейросетей. Объяснит методологию ПЛК-ФОТ. Поможет выбрать инструмент под задачу.',
@@ -37,7 +37,7 @@ export default function BotsPage() {
     {
       id: 'trainer',
       icon: '🎯',
-      image: '/images/bots/bot2.jpg',
+      image: '/images/projects/ai bot2.JPG',
       name: 'Тренажёр промтов',
       subtitle: 'оценка по методологии ПЛК-ФОТ',
       description: 'Вставь любой промт — получи оценку 0-10 по 6 критериям и улучшенную версию за 10 секунд.',
