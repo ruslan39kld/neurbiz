@@ -14,6 +14,7 @@ import RegulationPage from './components/RegulationPage';
 import CertsPage from './components/CertsPage';
 import ContactsPage from './components/ContactsPage';
 import BotsPage from './components/BotsPage';
+import CookieBanner from './components/CookieBanner';
 import AdminApp from './admin/AdminApp';
 import { trackEvent } from './utils/analytics';
 
@@ -101,6 +102,7 @@ export default function App() {
   return (
     <>
       <Preloader />
+      <CookieBanner />
       
       <div className="flex min-h-[100dvh] bg-[var(--bg-primary)] text-[var(--text-main)] font-dm transition-colors duration-300">
         <Sidebar 
