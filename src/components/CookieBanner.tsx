@@ -31,22 +31,19 @@ const CookieBanner: React.FC = () => {
     <>
       <div className="fixed bottom-6 right-6 z-[9999] max-w-[450px] animate-slide-in-right">
         <div className="bg-white border-2 border-orange-500 rounded-xl shadow-2xl p-4">
-          {/* Flex контейнер: текст слева, кнопка справа */}
           <div className="flex items-center gap-4">
-            {/* Текст */}
             <div className="flex-1">
               <p className="text-gray-800 text-sm leading-relaxed">
-                Мы используем cookies и Яндекс.Метрику для улучшения сайта.{' '}
+                Наш сайт использует cookies, продолжая им пользоваться, вы соглашаетесь{' '}
                 <button
                   onClick={handleOpenPolicy}
                   className="text-orange-500 hover:text-orange-600 underline font-medium"
                 >
-                  Подробнее
+                  на обработку персональных данных
                 </button>
               </p>
             </div>
 
-            {/* Кнопка справа */}
             <button
               onClick={handleAccept}
               className="flex-shrink-0 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold py-2.5 px-5 rounded-lg transition-all duration-200 whitespace-nowrap"
