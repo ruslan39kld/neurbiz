@@ -29,38 +29,28 @@ const CookieBanner: React.FC = () => {
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-[9999] max-w-[380px] animate-slide-in-right">
-        <div className="bg-white border-2 border-orange-500 rounded-xl shadow-2xl p-5">
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center">
-              <svg 
-                className="w-9 h-9 text-orange-500" 
-                fill="currentColor" 
-                viewBox="0 0 20 20"
-              >
-                <path d="M2 4.5A2.5 2.5 0 014.5 2h11a2.5 2.5 0 010 5h-11A2.5 2.5 0 012 4.5zM2.75 9.083a.75.75 0 000 1.5h14.5a.75.75 0 000-1.5H2.75zM2.75 12.663a.75.75 0 000 1.5h14.5a.75.75 0 000-1.5H2.75zM2.75 16.25a.75.75 0 000 1.5h14.5a.75.75 0 100-1.5H2.75z"/>
-              </svg>
-            </div>
-
-            <div className="flex-1">
-              <p className="text-gray-800 text-sm leading-relaxed mb-4">
-                Мы используем cookies и Яндекс.Метрику для улучшения сайта.{' '}
-                <button
-                  onClick={handleOpenPolicy}
-                  className="text-orange-500 hover:text-orange-600 underline font-medium"
-                >
-                  Подробнее
-                </button>
-              </p>
-
+      <div className="fixed bottom-6 right-6 z-[9999] max-w-[420px] animate-slide-in-right">
+        <div className="bg-white border-2 border-orange-500 rounded-xl shadow-2xl p-4 flex items-center gap-4">
+          {/* Текст слева */}
+          <div className="flex-1">
+            <p className="text-gray-800 text-sm leading-relaxed">
+              Мы используем cookies и Яндекс.Метрику для улучшения сайта.{' '}
               <button
-                onClick={handleAccept}
-                className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-md"
+                onClick={handleOpenPolicy}
+                className="text-orange-500 hover:text-orange-600 underline font-medium"
               >
-                Согласен
+                Подробнее
               </button>
-            </div>
+            </p>
           </div>
+
+          {/* Кнопка "Согласен" справа */}
+          <button
+            onClick={handleAccept}
+            className="flex-shrink-0 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold py-2.5 px-5 rounded-lg transition-all duration-200 whitespace-nowrap"
+          >
+            Согласен
+          </button>
         </div>
       </div>
 
