@@ -15,6 +15,7 @@ import CertsPage from './components/CertsPage';
 import ContactsPage from './components/ContactsPage';
 import BotsPage from './components/BotsPage';
 import CookieBanner from './components/CookieBanner';
+import PrivacyPolicyPage from './components/PrivacyPolicyPage';
 import AdminApp from './admin/AdminApp';
 import { trackEvent } from './utils/analytics';
 
@@ -41,6 +42,7 @@ export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isPrivacyRoute = location.pathname === '/privacy-policy';
 
   const [activeTab, setActiveTab] = useState('about');
   const [theme, setTheme] = useState(() => {
@@ -53,7 +55,6 @@ export default function App() {
 
   useEffect(() => {
     initializeLocalStorage();
-    // Check for active admin session and redirect if on main site
     if (!isAdminRoute) {
       const isAuth = localStorage.getItem('admin_auth') === 'true' || sessionStorage.getItem('admin_auth') === 'true';
       if (isAuth) {
@@ -63,13 +64,13 @@ export default function App() {
   }, [isAdminRoute, navigate]);
 
   useEffect(() => {
-    if (!isAdminRoute) {
+    if (!isAdminRoute && !isPrivacyRoute) {
       trackEvent(activeTab, 'page_view');
     }
-  }, [activeTab, isAdminRoute]);
+  }, [activeTab, isAdminRoute, isPrivacyRoute]);
 
   useEffect(() => {
-    if (isAdminRoute) return; // Admin panel has its own theme
+    if (isAdminRoute) return;
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
@@ -99,6 +100,27 @@ export default function App() {
     return <AdminApp />;
   }
 
+  if (isPrivacyRoute) {
+    return (
+      <>
+        <Preloader />
+        <div className="flex min-h-[100dvh] bg-[var(--bg-primary)] text-[var(--text-main)] font-dm">
+          <Sidebar 
+            activeTab={activeTab} 
+            setActiveTab={setActiveTab} 
+            theme={theme} 
+            toggleTheme={toggleTheme}
+            isOpen={isSidebarOpen}
+            setIsOpen={setIsSidebarOpen}
+          />
+          <main className="flex-1 w-full md:w-[calc(100%-260px)] min-h-[100dvh]">
+            <PrivacyPolicyPage />
+          </main>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <Preloader />
@@ -115,7 +137,6 @@ export default function App() {
         />
         
         <main className="flex-1 w-full md:w-[calc(100%-260px)] min-h-[100dvh] relative">
-          {/* Mobile Header */}
           <div className="md:hidden sticky top-0 z-30 bg-[var(--bg-sidebar)]/80 backdrop-blur-md border-b border-[var(--border)] px-4 py-3 flex items-center justify-between">
             <div className="font-orbitron font-bold text-[16px] text-[var(--text-main)]">
               БР | Портфолио

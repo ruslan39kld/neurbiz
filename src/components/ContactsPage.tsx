@@ -1,11 +1,10 @@
 import { motion } from 'motion/react';
 import { Send, Mail, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { trackEvent } from '../utils/analytics';
-
 import SectionTitle from './SectionTitle';
 
 export default function ContactsPage() {
-
   return (
     <div className="px-[20px] py-[24px] md:px-[32px] md:py-[32px] lg:px-[72px] lg:py-[56px] max-w-7xl mx-auto">
       <motion.div
@@ -98,6 +97,26 @@ export default function ContactsPage() {
                   <p className="font-dm text-[16px] font-medium text-[var(--text-main)]">Москва, Россия</p>
                 </div>
               </motion.div>
+
+              {/* НОВОЕ: Ссылка на Политику конфиденциальности */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 }}
+                className="pt-4 border-t border-[var(--border)]"
+              >
+                <p className="font-dm text-[13px] text-[var(--text-secondary)] leading-relaxed">
+                  Продолжая использование сайта stimit.ru, Вы соглашаетесь с{' '}
+                  <Link
+                    to="/privacy-policy"
+                    onClick={() => trackEvent('contacts', 'click_privacy_policy')}
+                    className="text-[#FF6B2B] hover:text-[#FF8C5A] underline font-medium transition-colors"
+                  >
+                    Политикой конфиденциальности
+                  </Link>
+                </p>
+              </motion.div>
             </div>
           </div>
 
@@ -122,7 +141,6 @@ export default function ContactsPage() {
           </motion.div>
         </div>
       </motion.div>
-
     </div>
   );
 }
