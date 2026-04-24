@@ -24,13 +24,7 @@ const CookieBanner: React.FC = () => {
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <p className="text-gray-800 text-sm leading-relaxed">
-                Наш сайт использует cookies, продолжая им пользоваться, вы соглашаетесь{' '}
-                
-                  href="/privacy-policy"
-                  className="text-orange-500 hover:text-orange-600 underline font-medium"
-                >
-                  на обработку персональных данных
-                </a>
+                Наш сайт использует cookies, продолжая им пользоваться, вы соглашаетесь <a href="/privacy-policy" className="text-orange-500 hover:text-orange-600 underline font-medium">на обработку персональных данных</a>
               </p>
             </div>
 

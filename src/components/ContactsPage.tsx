@@ -23,6 +23,7 @@ export default function ContactsPage() {
             <h2 className="font-orbitron text-[24px] text-[var(--text-main)] mb-6">Свяжитесь со мной</h2>
             
             <div className="space-y-6">
+              {/* Email */}
               <motion.a
                 href="mailto:ruslan-39kld@yandex.ru"
                 onClick={() => trackEvent('contacts', 'click_email')}
@@ -40,6 +41,7 @@ export default function ContactsPage() {
                 </div>
               </motion.a>
 
+              {/* Telegram */}
               <motion.a
                 href="https://t.me/Ruslan39kld"
                 target="_blank"
@@ -60,6 +62,7 @@ export default function ContactsPage() {
                 </div>
               </motion.a>
 
+              {/* VK */}
               <motion.a
                 href="https://vk.com/beltugov39"
                 target="_blank"
@@ -82,6 +85,7 @@ export default function ContactsPage() {
                 </div>
               </motion.a>
 
+              {/* Location */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
