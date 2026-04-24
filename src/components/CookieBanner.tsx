@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import PrivacyPolicyModal from './PrivacyPolicyModal';
 
 const CookieBanner: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const consent = localStorage.getItem('cookieConsent');
@@ -17,14 +15,6 @@ const CookieBanner: React.FC = () => {
     setIsVisible(false);
   };
 
-  const handleOpenPolicy = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   if (!isVisible) return null;
 
   return (
@@ -35,12 +25,12 @@ const CookieBanner: React.FC = () => {
             <div className="flex-1">
               <p className="text-gray-800 text-sm leading-relaxed">
                 Наш сайт использует cookies, продолжая им пользоваться, вы соглашаетесь{' '}
-                <button
-                  onClick={handleOpenPolicy}
+                
+                  href="/privacy-policy"
                   className="text-orange-500 hover:text-orange-600 underline font-medium"
                 >
                   на обработку персональных данных
-                </button>
+                </a>
               </p>
             </div>
 
@@ -53,8 +43,6 @@ const CookieBanner: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <PrivacyPolicyModal isOpen={isModalOpen} onClose={handleCloseModal} />
 
       <style>{`
         @keyframes slide-in-right {
