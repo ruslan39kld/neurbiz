@@ -98,7 +98,7 @@ export default function ContactsPage() {
                 </div>
               </motion.div>
 
-              {/* НОВОЕ: Ссылка на Политику конфиденциальности */}
+              {/* ⭐ НОВОЕ: Политика конфиденциальности */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
