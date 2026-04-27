@@ -451,7 +451,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
           >
             <button
               onClick={() => setActiveTab?.('contacts')}
-              className="bg-transparent border-2 border-[#FF6B2B] text-[#FF6B2B] font-orbitron text-[13px] px-7 py-3 rounded-lg hover:bg-[#FF6B2B] hover:text-white transition-colors"
+              className="bg-[#FF6B35] text-white font-orbitron text-[17px] font-bold px-8 py-4 rounded-lg hover:bg-[#e55a1f] transition-colors shadow-[0_4px_16px_rgba(255,107,43,0.4)]"
             >
               Связаться
             </button>
