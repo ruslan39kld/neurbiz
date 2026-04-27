@@ -54,6 +54,8 @@ function StimitTitle({ onRegulation }: { onRegulation?: () => void }) {
         transition={{ delay: 0.7 }}
         style={{
           display: 'inline-block',
+          width: 'fit-content',
+          whiteSpace: 'nowrap',
           marginTop: '18px',
           padding: '8px 16px',
           fontFamily: 'Orbitron, monospace',
@@ -370,33 +372,34 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
         zIndex: 50,
         background: '#ffffff',
         borderBottom: '1px solid rgba(0,0,0,0.08)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
         display: 'flex',
-        gap: '32px',
-        padding: '12px 72px',
-        fontFamily: 'Orbitron, monospace',
-        fontSize: '12px',
-        color: 'var(--text-secondary)',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 40px',
+        height: '56px',
       }}>
-        <span style={{ fontFamily: 'Orbitron, monospace', fontSize: '14px', fontWeight: 700, color: '#FF6B2B', marginRight: 'auto' }}>STIMIT</span>
-        {[
-          { label: 'Обо мне',     id: 'section-hero' },
-          { label: 'Опыт',        id: 'section-experience' },
-          { label: 'Архитектура', id: 'section-arch' },
-          { label: 'Важно',       id: 'section-why' },
-          { label: 'Стек',        id: 'section-stack' },
-          { label: 'Методология', id: 'section-method' },
-        ].map(item => (
-          <span
-            key={item.id}
-            style={{ cursor: 'pointer' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLSpanElement).style.color = '#FF6B2B'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLSpanElement).style.color = 'var(--text-secondary)'; }}
-            onClick={() => { document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' }); }}
-          >
-            {item.label}
-          </span>
-        ))}
+        <span style={{ fontFamily: 'Orbitron, monospace', fontSize: '15px', fontWeight: 700, color: '#FF6B2B' }}>STIMIT</span>
+        <div className="hidden md:flex" style={{ gap: '28px', fontFamily: 'Orbitron, monospace', fontSize: '11px', color: '#666' }}>
+          {[
+            { label: 'Обо мне',     id: 'section-hero' },
+            { label: 'Опыт',        id: 'section-experience' },
+            { label: 'Архитектура', id: 'section-arch' },
+            { label: 'Важно',       id: 'section-why' },
+            { label: 'Стек',        id: 'section-stack' },
+            { label: 'Методология', id: 'section-method' },
+          ].map(item => (
+            <span
+              key={item.id}
+              style={{ cursor: 'pointer' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLSpanElement).style.color = '#FF6B2B'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLSpanElement).style.color = '#666'; }}
+              onClick={() => { document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' }); }}
+            >
+              {item.label}
+            </span>
+          ))}
+        </div>
       </nav>
 
       <div className="px-[20px] py-[24px] md:px-[32px] md:py-[32px] lg:px-[72px] lg:py-[56px] max-w-7xl mx-auto">
