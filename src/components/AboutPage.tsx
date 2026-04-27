@@ -450,12 +450,6 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
             className="flex flex-wrap gap-4"
           >
             <button
-              onClick={() => setActiveTab?.('regulation')}
-              className="bg-[#FF6B2B] text-white font-orbitron text-[13px] px-7 py-3 rounded-lg hover:bg-[#e55a1f] transition-colors"
-            >
-              Узнать больше
-            </button>
-            <button
               onClick={() => setActiveTab?.('contacts')}
               className="bg-transparent border-2 border-[#FF6B2B] text-[#FF6B2B] font-orbitron text-[13px] px-7 py-3 rounded-lg hover:bg-[#FF6B2B] hover:text-white transition-colors"
             >
@@ -631,7 +625,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
           От задачи заказчика до работающего продукта — четыре этапа.
         </motion.p>
 
-        <ArchModule onRegulation={() => setActiveTab?.('regulation')} />
+        <ArchModule onRegulation={() => { window.scrollTo({ top: 0, behavior: 'instant' }); setActiveTab?.('regulation'); }} />
       </div>
 
       {/* ══════════════════════════════════════════
