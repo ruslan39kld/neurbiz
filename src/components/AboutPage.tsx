@@ -47,51 +47,26 @@ function StimitTitle({ onRegulation }: { onRegulation?: () => void }) {
         ))}
       </div>
 
-      {/* Линия — градиент оранжевый → прозрачный */}
       <motion.div
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.6, duration: 0.4, ease: 'easeOut' }}
-        style={{
-          height: '2px',
-          background: 'linear-gradient(90deg, #FF6B2B 0%, rgba(255,107,43,0.15) 100%)',
-          maxWidth: '540px',
-          transformOrigin: 'left',
-        }}
-      />
-
-      {/* Расшифровка — крупная, жирная, цвет под картинку
-          Латинские S,T,I,M,I,T — оранжевые и крупнее
-          Остальное — тёмно-синий (#1B3A6B) как буквы STIMIT */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ delay: 0.7, duration: 0.45 }}
+        transition={{ delay: 0.7 }}
         style={{
+          display: 'inline-block',
+          marginTop: '18px',
+          padding: '10px 20px',
           fontFamily: 'Orbitron, monospace',
           fontWeight: 700,
-          fontSize: 'clamp(14px, 2vw, 21px)',
-          letterSpacing: '0.3px',
-          lineHeight: 1.7,
-          color: '#1B3A6B',
-          maxWidth: '580px',
-          textShadow: '1px 2px 6px rgba(0,0,0,0.13)',
+          fontSize: '13px',
+          letterSpacing: '1.5px',
+          color: '#FF6B2B',
+          background: 'rgba(255,107,43,0.15)',
+          border: '1.5px solid rgba(255,107,43,0.6)',
+          borderRadius: '8px',
         }}
       >
-        <span style={{ color: '#FF6B2B', fontWeight: 900, fontSize: '1.2em' }}>S</span>
-        <span>ис</span>
-        <span style={{ color: '#FF6B2B', fontWeight: 900, fontSize: '1.2em' }}>T</span>
-        <span>ема </span>
-        <span style={{ color: '#FF6B2B', fontWeight: 900, fontSize: '1.2em' }}>I</span>
-        <span>нтеллектуального </span>
-        <span style={{ color: '#FF6B2B', fontWeight: 900, fontSize: '1.2em' }}>M</span>
-        <span>одуля </span>
-        <span style={{ color: '#FF6B2B', fontWeight: 900, fontSize: '1.2em' }}>I</span>
-        <span>ндивидуальной </span>
-        <span style={{ color: '#FF6B2B', fontWeight: 900, fontSize: '1.2em' }}>T</span>
-        <span>рансформации</span>
+        МОДУЛЬНАЯ АРХИТЕКТУРА ЦИФРОВОЙ ТРАНСФОРМАЦИИ
       </motion.div>
     </div>
   );
@@ -145,7 +120,7 @@ function ArchModule({ onRegulation }: { onRegulation?: () => void }) {
         position: 'absolute',
         left: '50%',
         top: 0,
-        bottom: 0,
+        bottom: '96px',
         width: '3px',
         background: 'linear-gradient(180deg, #FF6B2B 0%, rgba(255,107,43,0.25) 100%)',
         transform: 'translateX(-50%)',
@@ -355,6 +330,7 @@ function ArchCard({ step }: { step: typeof ARCH_STEPS[0] }) {
 export default function AboutPage({ setActiveTab }: AboutPageProps) {
   const [certCount, setCertCount]       = useState(defaultCertificates.length);
   const [projectCount, setProjectCount] = useState(defaultProjects.length);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -373,6 +349,12 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
     load();
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 300);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const stats = [
     { num: 18,           suffix: '+', label: 'лет опыта',           icon: '⚙️' },
     { num: projectCount, suffix: '+', label: 'AI MVP в продакшене',  icon: '🚀' },
@@ -381,12 +363,46 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
   ];
 
   return (
-    <div className="px-[20px] py-[24px] md:px-[32px] md:py-[32px] lg:px-[72px] lg:py-[56px] max-w-7xl mx-auto">
+    <>
+      <nav style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        background: 'var(--bg-primary)',
+        borderBottom: '1px solid rgba(255,107,43,0.15)',
+        display: 'flex',
+        gap: '32px',
+        padding: '12px 72px',
+        fontFamily: 'Orbitron, monospace',
+        fontSize: '12px',
+        color: 'var(--text-secondary)',
+      }}>
+        {[
+          { label: 'Обо мне',     id: 'section-hero' },
+          { label: 'Опыт',        id: 'section-experience' },
+          { label: 'Архитектура', id: 'section-arch' },
+          { label: 'Важно',       id: 'section-why' },
+          { label: 'Стек',        id: 'section-stack' },
+          { label: 'Методология', id: 'section-method' },
+        ].map(item => (
+          <span
+            key={item.id}
+            style={{ cursor: 'pointer' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLSpanElement).style.color = '#FF6B2B'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLSpanElement).style.color = 'var(--text-secondary)'; }}
+            onClick={() => { document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' }); }}
+          >
+            {item.label}
+          </span>
+        ))}
+      </nav>
+
+      <div className="px-[20px] py-[24px] md:px-[32px] md:py-[32px] lg:px-[72px] lg:py-[56px] max-w-7xl mx-auto">
 
       {/* ══════════════════════════════════════════
           4.1  HERO
       ══════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-[55%_45%] gap-[28px] items-center">
+      <div id="section-hero" className="grid grid-cols-1 lg:grid-cols-[55%_45%] gap-[28px] items-center">
         <div>
           <StimitTitle onRegulation={() => setActiveTab?.('regulation')} />
 
@@ -453,7 +469,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       {/* ══════════════════════════════════════════
           4.2  ОПЫТ КАК ФУНДАМЕНТ
       ══════════════════════════════════════════ */}
-      <div className="mt-[96px]">
+      <div id="section-experience" className="mt-[96px]">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SectionTitle>ОПЫТ КАК ФУНДАМЕНТ</SectionTitle>
         </motion.div>
@@ -587,7 +603,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
           Компактные карточки: слева/справа компоновка
           Без раскрытия, с кнопкой перехода в регламент
       ══════════════════════════════════════════ */}
-      <div className="mt-[96px]">
+      <div id="section-arch" className="mt-[96px]">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SectionTitle>АРХИТЕКТУРА МОДУЛЯ</SectionTitle>
         </motion.div>
@@ -606,7 +622,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       {/* ══════════════════════════════════════════
           4.5  ПОЧЕМУ ЭТО ВАЖНО
       ══════════════════════════════════════════ */}
-      <div className="mt-[96px]">
+      <div id="section-why" className="mt-[96px]">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SectionTitle>ПОЧЕМУ ЭТО ВАЖНО</SectionTitle>
         </motion.div>
@@ -698,7 +714,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       {/* ══════════════════════════════════════════
           4.7  СТЕК
       ══════════════════════════════════════════ */}
-      <div className="mt-[96px]">
+      <div id="section-stack" className="mt-[96px]">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SectionTitle>СТЕК</SectionTitle>
         </motion.div>
@@ -829,7 +845,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       {/* ══════════════════════════════════════════
           4.8  МЕТОДОЛОГИЯ
       ══════════════════════════════════════════ */}
-      <div className="mt-[96px]">
+      <div id="section-method" className="mt-[96px]">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SectionTitle>МЕТОДОЛОГИЯ</SectionTitle>
         </motion.div>
@@ -857,5 +873,32 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       </div>
 
     </div>
+
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          style={{
+            position: 'fixed',
+            bottom: '32px',
+            right: '32px',
+            zIndex: 100,
+            width: '48px',
+            height: '48px',
+            background: '#FF6B2B',
+            color: 'white',
+            fontSize: '20px',
+            borderRadius: '50%',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 16px rgba(255,107,43,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          ↑
+        </button>
+      )}
+    </>
   );
 }
