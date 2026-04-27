@@ -385,8 +385,13 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
         padding: '0 40px',
         height: '56px',
       }}>
-        <span style={{ fontFamily: 'Orbitron, monospace', fontSize: '15px', fontWeight: 700, color: '#FF6B2B' }}>STIMIT</span>
         <div className="nav-links-about" style={{ display: 'flex', flex: 1, justifyContent: 'center', gap: '40px', fontFamily: 'Orbitron, monospace', fontSize: '14px', fontWeight: 700, letterSpacing: '1px', color: '#444' }}>
+          <span
+            style={{ cursor: 'pointer', transition: 'color 0.2s', color: '#FF6B2B', fontWeight: 800 }}
+            onClick={() => { document.getElementById('section-stimit')?.scrollIntoView({ behavior: 'smooth' }); }}
+          >
+            STIMIT
+          </span>
           {[
             { label: 'О проекте',   id: 'section-hero' },
             { label: 'Опыт',        id: 'section-experience' },
