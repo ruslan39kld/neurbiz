@@ -366,7 +366,13 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
 
   return (
     <>
-      <nav style={{
+      <style>{`
+        @media (max-width: 639px) { .about-nav { display: none !important; } }
+        @media (min-width: 640px) and (max-width: 1023px) {
+          .nav-links-about { font-size: 11px !important; gap: 24px !important; }
+        }
+      `}</style>
+      <nav className="about-nav" style={{
         position: 'sticky',
         top: 0,
         zIndex: 50,
@@ -380,14 +386,12 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
         height: '56px',
       }}>
         <span style={{ fontFamily: 'Orbitron, monospace', fontSize: '15px', fontWeight: 700, color: '#FF6B2B' }}>STIMIT</span>
-        <div className="hidden md:flex" style={{ gap: '28px', fontFamily: 'Orbitron, monospace', fontSize: '11px', color: '#666' }}>
+        <div className="nav-links-about" style={{ display: 'flex', flex: 1, justifyContent: 'center', gap: '40px', fontFamily: 'Orbitron, monospace', fontSize: '13px', fontWeight: 600, color: '#666' }}>
           {[
-            { label: 'Обо мне',     id: 'section-hero' },
             { label: 'Опыт',        id: 'section-experience' },
             { label: 'Архитектура', id: 'section-arch' },
             { label: 'Важно',       id: 'section-why' },
             { label: 'Стек',        id: 'section-stack' },
-            { label: 'Методология', id: 'section-method' },
           ].map(item => (
             <span
               key={item.id}
