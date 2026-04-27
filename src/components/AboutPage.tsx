@@ -88,28 +88,28 @@ const ARCH_STEPS = [
     title: 'Сбор данных',
     sub: 'База знаний · ТЗ',
     desc: 'Аудит данных заказчика, структурирование базы знаний, написание ТЗ и согласование сценариев работы системы.',
-    image: IMAGES.perviiMir,
+    image: '/images/projects/ai_bazaznnii.png',
   },
   {
     num: '02',
     title: 'Прототип',
     sub: 'Первая версия · 1–3 дня',
     desc: 'Разработка первого рабочего прототипа через Vibe Coding. Базовый UI, логика, первичное тестирование.',
-    image: IMAGES.vtoriMir,
+    image: '/images/projects/ai_prototip.png',
   },
   {
     num: '03',
     title: 'Доработка',
     sub: 'Функционал · Тестирование',
     desc: 'Устранение ошибок, расширение функционала до полного ТЗ, оптимизация и финальное согласование.',
-    image: IMAGES.stack,
+    image: '/images/projects/ai_dorabotka.png',
   },
   {
     num: '04',
     title: 'Продакшен',
     sub: 'Деплой · Сопровождение',
     desc: 'Деплой на сервер, настройка домена и SSL, документация, обучение команды и техническая поддержка.',
-    image: IMAGES.hero,
+    image: '/images/projects/ai_prodakshen.png',
   },
 ];
 
