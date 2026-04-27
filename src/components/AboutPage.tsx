@@ -55,11 +55,11 @@ function StimitTitle({ onRegulation }: { onRegulation?: () => void }) {
         style={{
           display: 'inline-block',
           marginTop: '18px',
-          padding: '10px 20px',
+          padding: '8px 16px',
           fontFamily: 'Orbitron, monospace',
           fontWeight: 700,
-          fontSize: '13px',
-          letterSpacing: '1.5px',
+          fontSize: '14px',
+          letterSpacing: '1px',
           color: '#FF6B2B',
           background: 'rgba(255,107,43,0.15)',
           border: '1.5px solid rgba(255,107,43,0.6)',
@@ -368,8 +368,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        background: 'var(--bg-primary)',
-        borderBottom: '1px solid rgba(255,107,43,0.15)',
+        background: '#ffffff',
+        borderBottom: '1px solid rgba(0,0,0,0.08)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
         display: 'flex',
         gap: '32px',
         padding: '12px 72px',
@@ -377,6 +378,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
         fontSize: '12px',
         color: 'var(--text-secondary)',
       }}>
+        <span style={{ fontFamily: 'Orbitron, monospace', fontSize: '14px', fontWeight: 700, color: '#FF6B2B', marginRight: 'auto' }}>STIMIT</span>
         {[
           { label: 'Обо мне',     id: 'section-hero' },
           { label: 'Опыт',        id: 'section-experience' },
