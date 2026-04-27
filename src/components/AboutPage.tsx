@@ -630,6 +630,72 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       </div>
 
       {/* ══════════════════════════════════════════
+          STIMIT
+      ══════════════════════════════════════════ */}
+      <div id="section-stimit" className="mt-[96px]">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <SectionTitle>STIMIT</SectionTitle>
+        </motion.div>
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '18px', color: 'var(--text-secondary)', marginBottom: '48px' }}
+        >
+          Стимул к переменам через интеллектуальные модули
+        </motion.p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[24px]">
+          {[
+            { letter: 'S', word: 'корость',      desc: 'Решения за дни, не месяцы' },
+            { letter: 'T', word: 'очность',       desc: 'AI-системы с результатом 90–95%' },
+            { letter: 'I', word: 'нтеллект',      desc: 'Искусственный интеллект как основа каждого модуля' },
+            { letter: 'M', word: 'асштаб',        desc: 'От простой автоматизации до корпоративных систем' },
+            { letter: 'I', word: 'нновация',      desc: 'Методология Vibe Coding + Frontier Deployment' },
+            { letter: 'T', word: 'рансформация',  desc: 'Реальные изменения в бизнесе, не красивые демо' },
+          ].map((card, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              style={{
+                background: 'var(--bg-card)',
+                border: '1px solid rgba(255,107,43,0.2)',
+                borderRadius: '16px',
+                padding: '24px',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                cursor: 'default',
+              }}
+              onMouseEnter={e => {
+                const el = e.currentTarget as HTMLDivElement;
+                el.style.transform = 'translateY(-4px)';
+                el.style.boxShadow = '0 12px 32px rgba(255,107,43,0.15)';
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget as HTMLDivElement;
+                el.style.transform = 'translateY(0)';
+                el.style.boxShadow = 'none';
+              }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
+                <span style={{ fontFamily: 'Orbitron, monospace', fontSize: '48px', fontWeight: 900, color: '#FFB800', lineHeight: 1, marginRight: '2px' }}>
+                  {card.letter}
+                </span>
+                <span style={{ fontFamily: 'Orbitron, monospace', fontSize: '22px', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1 }}>
+                  {card.word}
+                </span>
+              </div>
+              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, marginTop: '12px' }}>
+                {card.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════
           4.5  ПОЧЕМУ ЭТО ВАЖНО
       ══════════════════════════════════════════ */}
       <div id="section-why" className="mt-[96px]">
