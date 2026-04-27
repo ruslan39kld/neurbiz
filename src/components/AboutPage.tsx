@@ -386,8 +386,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
         height: '56px',
       }}>
         <span style={{ fontFamily: 'Orbitron, monospace', fontSize: '15px', fontWeight: 700, color: '#FF6B2B' }}>STIMIT</span>
-        <div className="nav-links-about" style={{ display: 'flex', flex: 1, justifyContent: 'center', gap: '40px', fontFamily: 'Orbitron, monospace', fontSize: '13px', fontWeight: 600, color: '#666' }}>
+        <div className="nav-links-about" style={{ display: 'flex', flex: 1, justifyContent: 'center', gap: '40px', fontFamily: 'Orbitron, monospace', fontSize: '14px', fontWeight: 700, letterSpacing: '1px', color: '#444' }}>
           {[
+            { label: 'О проекте',   id: 'section-hero' },
             { label: 'Опыт',        id: 'section-experience' },
             { label: 'Архитектура', id: 'section-arch' },
             { label: 'Важно',       id: 'section-why' },
@@ -395,9 +396,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
           ].map(item => (
             <span
               key={item.id}
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: 'pointer', transition: 'color 0.2s' }}
               onMouseEnter={e => { (e.currentTarget as HTMLSpanElement).style.color = '#FF6B2B'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLSpanElement).style.color = '#666'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLSpanElement).style.color = '#444'; }}
               onClick={() => { document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' }); }}
             >
               {item.label}
