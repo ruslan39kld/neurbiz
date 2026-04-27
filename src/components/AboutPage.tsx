@@ -387,6 +387,12 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       }}>
         <span style={{ fontFamily: 'Orbitron, monospace', fontSize: '15px', fontWeight: 700, color: '#FF6B2B' }}>STIMIT</span>
         <div className="nav-links-about" style={{ display: 'flex', flex: 1, justifyContent: 'center', gap: '40px', fontFamily: 'Orbitron, monospace', fontSize: '14px', fontWeight: 700, letterSpacing: '1px', color: '#444' }}>
+          <span
+            style={{ cursor: 'pointer', transition: 'color 0.2s', color: '#FF6B2B', fontWeight: 800 }}
+            onClick={() => { document.getElementById('section-stimit')?.scrollIntoView({ behavior: 'smooth' }); }}
+          >
+            STIMIT
+          </span>
           {[
             { label: 'О проекте',   id: 'section-hero' },
             { label: 'Опыт',        id: 'section-experience' },
@@ -412,7 +418,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       {/* ══════════════════════════════════════════
           4.1  HERO
       ══════════════════════════════════════════ */}
-      <div id="section-hero" className="grid grid-cols-1 lg:grid-cols-[55%_45%] gap-[28px] items-center">
+      <div id="section-hero" className="grid grid-cols-1 lg:grid-cols-[55%_45%] gap-[28px] items-center" style={{ scrollMarginTop: '64px' }}>
         <div>
           <StimitTitle onRegulation={() => setActiveTab?.('regulation')} />
 
@@ -479,7 +485,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       {/* ══════════════════════════════════════════
           4.2  ОПЫТ КАК ФУНДАМЕНТ
       ══════════════════════════════════════════ */}
-      <div id="section-experience" className="mt-[96px]">
+      <div id="section-experience" className="mt-[96px]" style={{ scrollMarginTop: '64px' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SectionTitle>ОПЫТ КАК ФУНДАМЕНТ</SectionTitle>
         </motion.div>
@@ -613,7 +619,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
           Компактные карточки: слева/справа компоновка
           Без раскрытия, с кнопкой перехода в регламент
       ══════════════════════════════════════════ */}
-      <div id="section-arch" className="mt-[96px]">
+      <div id="section-arch" className="mt-[96px]" style={{ scrollMarginTop: '64px' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SectionTitle>АРХИТЕКТУРА МОДУЛЯ</SectionTitle>
         </motion.div>
@@ -632,7 +638,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       {/* ══════════════════════════════════════════
           STIMIT
       ══════════════════════════════════════════ */}
-      <div id="section-stimit" className="mt-[96px]">
+      <div id="section-stimit" className="mt-[96px]" style={{ scrollMarginTop: '64px' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SectionTitle>STIMIT</SectionTitle>
         </motion.div>
@@ -698,7 +704,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       {/* ══════════════════════════════════════════
           4.5  ПОЧЕМУ ЭТО ВАЖНО
       ══════════════════════════════════════════ */}
-      <div id="section-why" className="mt-[96px]">
+      <div id="section-why" className="mt-[96px]" style={{ scrollMarginTop: '64px' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SectionTitle>ПОЧЕМУ ЭТО ВАЖНО</SectionTitle>
         </motion.div>
@@ -790,7 +796,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       {/* ══════════════════════════════════════════
           4.7  СТЕК
       ══════════════════════════════════════════ */}
-      <div id="section-stack" className="mt-[96px]">
+      <div id="section-stack" className="mt-[96px]" style={{ scrollMarginTop: '64px' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SectionTitle>СТЕК</SectionTitle>
         </motion.div>
@@ -921,7 +927,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       {/* ══════════════════════════════════════════
           4.8  МЕТОДОЛОГИЯ
       ══════════════════════════════════════════ */}
-      <div id="section-method" className="mt-[96px]">
+      <div id="section-method" className="mt-[96px]" style={{ scrollMarginTop: '64px' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SectionTitle>МЕТОДОЛОГИЯ</SectionTitle>
         </motion.div>
