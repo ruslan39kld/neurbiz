@@ -270,11 +270,11 @@ function ArchCard({ step }: { step: typeof ARCH_STEPS[0] }) {
     }}
     >
       {/* Картинка сверху */}
-      <div style={{ height: '140px', overflow: 'hidden', position: 'relative' }}>
+      <div style={{ minHeight: '200px', position: 'relative', background: 'rgba(255,107,43,0.04)' }}>
         <img
           src={step.image}
           alt={step.title}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          style={{ width: '100%', height: 'auto', objectFit: 'contain', display: 'block' }}
           onError={(e) => {
             const p = e.currentTarget.parentElement!;
             p.style.background = 'rgba(255,107,43,0.1)';
