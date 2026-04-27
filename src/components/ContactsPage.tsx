@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Send, Mail, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -5,6 +6,23 @@ import { trackEvent } from '../utils/analytics';
 import SectionTitle from './SectionTitle';
 
 export default function ContactsPage() {
+  const [form, setForm] = useState({ name: '', contact: '', message: '' });
+  const [errors, setErrors] = useState({ name: false, contact: false, message: false });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors = {
+      name: !form.name.trim(),
+      contact: !form.contact.trim(),
+      message: !form.message.trim(),
+    };
+    setErrors(newErrors);
+    if (!newErrors.name && !newErrors.contact && !newErrors.message) {
+      setSubmitted(true);
+    }
+  };
+
   return (
     <div className="px-[20px] py-[24px] md:px-[32px] md:py-[32px] lg:px-[72px] lg:py-[56px] max-w-7xl mx-auto">
       <motion.div
@@ -124,24 +142,86 @@ export default function ContactsPage() {
             </div>
           </div>
 
-          {/* Image block */}
+          {/* Contact Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            whileHover={{ scale: 1.02, y: -6 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-[20px] overflow-hidden cursor-pointer"
+            className="bg-white rounded-[20px] p-8"
             style={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)' }}
-            onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,107,43,0.15), 0 0 24px rgba(255,107,43,0.12)')}
-            onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)')}
           >
-            <img
-              src="/images/projects/ai_svyz.jpg"
-              alt="AI collaboration"
-              className="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-105"
-              style={{ minHeight: '320px' }}
-            />
+            {submitted ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '280px', gap: '16px' }}>
+                <div style={{ fontSize: '48px' }}>✅</div>
+                <p style={{ fontFamily: 'Orbitron, monospace', fontSize: '18px', color: '#FF6B2B', fontWeight: 700, textAlign: 'center' }}>Сообщение отправлено!</p>
+                <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', color: '#666', textAlign: 'center' }}>Свяжусь с вами в ближайшее время.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <h3 style={{ fontFamily: 'Orbitron, monospace', fontSize: '18px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>
+                  Написать сообщение
+                </h3>
+
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Ваше имя"
+                    value={form.name}
+                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                    style={{
+                      width: '100%', padding: '12px 16px', borderRadius: '10px', boxSizing: 'border-box',
+                      border: errors.name ? '1.5px solid #EF4444' : '1.5px solid rgba(0,0,0,0.12)',
+                      fontFamily: 'DM Sans, sans-serif', fontSize: '15px', outline: 'none', background: '#fafafa',
+                    }}
+                  />
+                  {errors.name && <p style={{ color: '#EF4444', fontSize: '12px', marginTop: '4px', fontFamily: 'DM Sans, sans-serif' }}>Обязательное поле</p>}
+                </div>
+
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Email или Telegram"
+                    value={form.contact}
+                    onChange={e => setForm(f => ({ ...f, contact: e.target.value }))}
+                    style={{
+                      width: '100%', padding: '12px 16px', borderRadius: '10px', boxSizing: 'border-box',
+                      border: errors.contact ? '1.5px solid #EF4444' : '1.5px solid rgba(0,0,0,0.12)',
+                      fontFamily: 'DM Sans, sans-serif', fontSize: '15px', outline: 'none', background: '#fafafa',
+                    }}
+                  />
+                  {errors.contact && <p style={{ color: '#EF4444', fontSize: '12px', marginTop: '4px', fontFamily: 'DM Sans, sans-serif' }}>Обязательное поле</p>}
+                </div>
+
+                <div>
+                  <textarea
+                    placeholder="Опишите ваш вопрос или пожелание"
+                    value={form.message}
+                    onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+                    rows={5}
+                    style={{
+                      width: '100%', padding: '12px 16px', borderRadius: '10px', boxSizing: 'border-box',
+                      border: errors.message ? '1.5px solid #EF4444' : '1.5px solid rgba(0,0,0,0.12)',
+                      fontFamily: 'DM Sans, sans-serif', fontSize: '15px', outline: 'none', background: '#fafafa',
+                      resize: 'vertical',
+                    }}
+                  />
+                  {errors.message && <p style={{ color: '#EF4444', fontSize: '12px', marginTop: '4px', fontFamily: 'DM Sans, sans-serif' }}>Обязательное поле</p>}
+                </div>
+
+                <button
+                  type="submit"
+                  style={{
+                    padding: '14px 32px', background: '#FF6B35', color: 'white', border: 'none',
+                    borderRadius: '10px', fontFamily: 'Orbitron, monospace', fontSize: '13px',
+                    fontWeight: 700, letterSpacing: '1px', cursor: 'pointer', transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#e55a1f'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FF6B35'; }}
+                >
+                  ОТПРАВИТЬ
+                </button>
+              </form>
+            )}
           </motion.div>
         </div>
       </motion.div>
