@@ -116,84 +116,44 @@ const ARCH_STEPS = [
 function ArchModule({ onRegulation }: { onRegulation?: () => void }) {
   return (
     <div style={{ position: 'relative' }}>
-
-      {/* Вертикальная оранжевая линия по центру — desktop */}
-      <div className="hidden md:block" style={{
-        position: 'absolute',
-        left: '50%',
-        top: 0,
-        bottom: '96px',
-        width: '3px',
-        background: 'linear-gradient(180deg, #FF6B2B 0%, rgba(255,107,43,0.25) 100%)',
-        transform: 'translateX(-50%)',
-        borderRadius: '2px',
-        zIndex: 0,
-      }} />
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', position: 'relative', zIndex: 1 }}>
-        {ARCH_STEPS.map((step, i) => {
-          const isLeft = i % 2 === 0;
-          return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="arch-timeline-row"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 48px 1fr',
-                alignItems: 'center',
-                gap: '0',
-              }}
-            >
-              {/* Левая колонка */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '28px' }}>
-                {isLeft ? <ArchCard step={step} /> : <div />}
-              </div>
-
-              {/* Центр — круглый маркер, всё оранжевое */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
-                <div style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '50%',
-                  background: '#FF6B2B',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontFamily: 'Orbitron, monospace',
-                  fontWeight: 700,
-                  fontSize: '13px',
-                  color: '#fff',
-                  flexShrink: 0,
-                  // тень на маркере
-                  boxShadow: '0 0 0 4px var(--bg-primary), 0 0 0 6px rgba(255,107,43,0.45), 0 6px 20px rgba(255,107,43,0.5)',
-                }}>
-                  {step.num}
-                </div>
-              </div>
-
-              {/* Правая колонка */}
-              <div style={{ display: 'flex', justifyContent: 'flex-start', paddingLeft: '28px' }}>
-                {!isLeft ? <ArchCard step={step} /> : <div />}
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
-
       <style>{`
-        @media (max-width: 768px) {
-          .arch-timeline-row {
-            grid-template-columns: 32px 1fr !important;
-            gap: 12px !important;
+        .arch-cards-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 40px;
+        }
+        @media (max-width: 1024px) {
+          .arch-cards-grid { gap: 24px; }
+        }
+        @media (max-width: 767px) {
+          .arch-cards-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
           }
+        }
+        .arch-card-title { font-size: 15px; }
+        .arch-card-text  { padding: 16px 20px; }
+        @media (max-width: 639px) {
+          .arch-card-title { font-size: 13px; }
+          .arch-card-text  { padding: 12px 16px; }
         }
       `}</style>
 
-      {/* Кнопка под линией — с заметной тенью */}
+      <div className="arch-cards-grid">
+        {ARCH_STEPS.map((step, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ delay: i * 0.1, duration: 0.5 }}
+          >
+            <ArchCard step={step} />
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Кнопка под карточками */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -217,7 +177,6 @@ function ArchModule({ onRegulation }: { onRegulation?: () => void }) {
             letterSpacing: '1px',
             cursor: 'pointer',
             transition: 'all 0.22s ease',
-            // заметная тень
             boxShadow: '0 6px 24px rgba(255,107,43,0.35), 0 2px 8px rgba(255,107,43,0.2)',
           }}
           onMouseEnter={e => {
@@ -253,8 +212,7 @@ function ArchCard({ step }: { step: typeof ARCH_STEPS[0] }) {
       borderRadius: '14px',
       overflow: 'hidden',
       width: '100%',
-      maxWidth: '420px',
-      // тень на карточке
+      maxWidth: '100%',
       boxShadow: '0 4px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,107,43,0.08), 0 8px 32px rgba(255,107,43,0.08)',
       transition: 'box-shadow 0.2s, transform 0.2s',
     }}
@@ -293,10 +251,9 @@ function ArchCard({ step }: { step: typeof ARCH_STEPS[0] }) {
       </div>
 
       {/* Текст */}
-      <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-        <div style={{
+      <div className="arch-card-text" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+        <div className="arch-card-title" style={{
           fontFamily: 'Orbitron, monospace',
-          fontSize: '15px',
           fontWeight: 700,
           color: ARCH_COLOR,
           textShadow: '0 2px 8px rgba(255,107,43,0.25)',
