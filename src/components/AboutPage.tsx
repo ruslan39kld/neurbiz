@@ -117,38 +117,109 @@ function ArchModule({ onRegulation }: { onRegulation?: () => void }) {
   return (
     <div style={{ position: 'relative' }}>
       <style>{`
-        .arch-cards-grid {
+        /* ── Timeline row: 3-col zigzag (desktop) ── */
+        .arch-row {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 32px;
+          grid-template-columns: 1fr 56px 1fr;
+          grid-template-areas: "left marker right";
+          align-items: center;
+          position: relative;
+          z-index: 1;
         }
-        @media (max-width: 768px) {
-          .arch-cards-grid {
-            grid-template-columns: 1fr;
-            gap: 16px;
-          }
-          .arch-card-title { font-size: 16px !important; }
-          .arch-card-text  { padding: 16px !important; }
-        }
+        .arch-cell-left   { grid-area: left;   display: flex; justify-content: flex-end;   padding-right: 28px; }
+        .arch-cell-marker { grid-area: marker; display: flex; justify-content: center; align-items: center; z-index: 2; }
+        .arch-cell-right  { grid-area: right;  display: flex; justify-content: flex-start; padding-left: 28px; }
+
+        /* ── Card styles ── */
         .arch-card-title { font-size: 16px; }
         .arch-card-text  { padding: 16px 20px; }
+
+        /* ── Mobile: marker left, card right ── */
+        @media (max-width: 768px) {
+          .arch-row {
+            grid-template-columns: 48px 1fr;
+            grid-template-areas: "marker card";
+            gap: 12px;
+            align-items: start;
+          }
+          .arch-cell-left  { grid-area: card; padding: 0; justify-content: stretch; }
+          .arch-cell-right { grid-area: card; padding: 0; justify-content: stretch; }
+          .arch-cell-marker { align-self: start; padding-top: 6px; }
+          .arch-card-title { font-size: 14px !important; }
+          .arch-card-text  { padding: 12px 14px !important; }
+        }
       `}</style>
 
-      <div className="arch-cards-grid">
-        {ARCH_STEPS.map((step, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ delay: i * 0.1, duration: 0.5 }}
-          >
-            <ArchCard step={step} />
-          </motion.div>
-        ))}
+      {/* Rows + vertical line wrapper */}
+      <div style={{ position: 'relative' }}>
+        {/* Vertical orange line — spans the rows block */}
+        <div style={{
+          position: 'absolute',
+          left: 'calc(50% - 1.5px)',
+          top: 0,
+          bottom: 0,
+          width: '3px',
+          background: 'linear-gradient(180deg, #FF6B2B 0%, rgba(255,107,43,0.2) 100%)',
+          borderRadius: '2px',
+          zIndex: 0,
+        }}
+          className="arch-tl-line"
+        />
+        <style>{`
+          @media (max-width: 768px) {
+            .arch-tl-line { left: 23px !important; }
+          }
+        `}</style>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+          {ARCH_STEPS.map((step, i) => {
+            const isLeft = i % 2 === 0;
+            return (
+              <motion.div
+                key={i}
+                className="arch-row"
+                initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+              >
+                {/* Left cell — card on even rows */}
+                <div className="arch-cell-left">
+                  {isLeft && <ArchCard step={step} />}
+                </div>
+
+                {/* Centre marker */}
+                <div className="arch-cell-marker">
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    background: '#FF6B2B',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Orbitron, monospace',
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    color: '#fff',
+                    flexShrink: 0,
+                    boxShadow: '0 0 0 4px var(--bg-primary), 0 0 0 6px rgba(255,107,43,0.45), 0 6px 20px rgba(255,107,43,0.5)',
+                  }}>
+                    {step.num}
+                  </div>
+                </div>
+
+                {/* Right cell — card on odd rows */}
+                <div className="arch-cell-right">
+                  {!isLeft && <ArchCard step={step} />}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Кнопка под карточками */}
+      {/* Button */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
