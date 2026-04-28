@@ -68,6 +68,8 @@ const STAGES = [
 
 export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: string) => void }) {
   const [regulations, setRegulations] = useState<any[]>([]);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [activeSection, setActiveSection] = useState('stages');
 
   useEffect(() => {
     const saved = localStorage.getItem('portfolio_regulations');
@@ -80,6 +82,22 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
     }
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+      const ids = ['benefits', 'important', 'stages'];
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= 120) {
+          setActiveSection(id);
+          return;
+        }
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="px-[20px] py-[24px] md:px-[32px] md:py-[32px] lg:px-[72px] lg:py-[56px] max-w-7xl mx-auto">
       <motion.div
@@ -87,9 +105,40 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
       >
+        {/* Title */}
+        <SectionTitle>РЕГЛАМЕНТ РАБОТ</SectionTitle>
+
+        {/* Sticky Nav */}
+        <nav style={{ position: 'sticky', top: 64, zIndex: 40, background: 'var(--bg-card)', borderBottom: '1px solid var(--border)', display: 'flex', gap: '8px', padding: '10px 0', marginBottom: '24px' }}>
+          {[
+            { id: 'stages', label: 'ЭТАПЫ' },
+            { id: 'important', label: 'ВАЖНО' },
+            { id: 'benefits', label: 'ЧТО ДАЁТ' },
+          ].map(item => (
+            <button
+              key={item.id}
+              onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' })}
+              style={{
+                fontFamily: 'Orbitron, monospace',
+                fontSize: '13px',
+                fontWeight: 700,
+                letterSpacing: '1px',
+                padding: '8px 20px',
+                borderRadius: '8px',
+                border: activeSection === item.id ? '2px solid #FFB800' : '2px solid transparent',
+                background: activeSection === item.id ? 'rgba(255,184,0,0.15)' : 'transparent',
+                color: activeSection === item.id ? '#FFB800' : 'var(--text-secondary)',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
+
         {/* БЛОК 1 */}
         <div className="mb-20">
-          <SectionTitle>РЕГЛАМЕНТ РАБОТ</SectionTitle>
           <p className="font-dm text-[16px] text-[var(--text-secondary)] mb-8">
             Как формируется и реализуется AI-проект
           </p>
@@ -119,7 +168,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
         </div>
 
         {/* БЛОК 2 */}
-        <div>
+        <div id="stages" style={{ scrollMarginTop: '120px' }}>
           <SectionTitle>ЭТАПЫ ФОРМИРОВАНИЯ AI-ПРОЕКТА</SectionTitle>
           <p className="font-dm text-[16px] text-[var(--text-secondary)] mb-12">
             От задачи заказчика до работающего продукта в продакшене
@@ -205,7 +254,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
           </div>
 
           {/* БЛОК 3: ВАЖНО */}
-          <div className="mt-24">
+          <div id="important" className="mt-24" style={{ scrollMarginTop: '120px' }}>
             <SectionTitle>ВАЖНО</SectionTitle>
             <p className="font-dm text-[16px] text-[var(--text-secondary)] mb-12">
               Два принципа, на которых строится каждый проект
@@ -297,7 +346,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
           </div>
 
           {/* БЛОК 4: ЧТО ДАЁТ ВНЕДРЕНИЕ AI */}
-          <div className="mt-24">
+          <div id="benefits" className="mt-24" style={{ scrollMarginTop: '120px' }}>
             <SectionTitle>ЧТО ДАЁТ ВНЕДРЕНИЕ AI</SectionTitle>
             <p className="font-dm text-[16px] text-[var(--text-secondary)] mb-12">
               Три результата, которые получает каждый заказчик
@@ -387,6 +436,33 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
           </div>
         </div>
       </motion.div>
+
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          style={{
+            position: 'fixed',
+            bottom: '32px',
+            right: '32px',
+            zIndex: 100,
+            width: '48px',
+            height: '48px',
+            borderRadius: '50%',
+            background: '#FF6B35',
+            color: '#fff',
+            border: 'none',
+            fontSize: '20px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 16px rgba(255,107,53,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          aria-label="Наверх"
+        >
+          ↑
+        </button>
+      )}
     </div>
   );
 }
