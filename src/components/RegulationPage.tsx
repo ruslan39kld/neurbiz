@@ -99,7 +99,44 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
   }, []);
 
   return (
-    <div className="px-[20px] py-[24px] md:px-[32px] md:py-[32px] lg:px-[72px] lg:py-[56px] max-w-7xl mx-auto">
+    <>
+      <style>{`
+        @media (max-width: 639px) { .reg-nav { display: none !important; } }
+        @media (min-width: 640px) and (max-width: 1023px) {
+          .reg-nav-links { font-size: 11px !important; gap: 24px !important; }
+        }
+      `}</style>
+      <nav className="reg-nav" style={{ position: 'sticky', top: 0, zIndex: 50, background: '#ffffff', borderBottom: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '56px' }}>
+        <div className="reg-nav-links" style={{ display: 'flex', gap: '40px', fontFamily: 'Orbitron, monospace', fontSize: '14px', fontWeight: 700, letterSpacing: '1px' }}>
+          {[
+            { id: 'stages', label: 'ЭТАПЫ' },
+            { id: 'important', label: 'ВАЖНО' },
+            { id: 'benefits', label: 'ЧТО ДАЁТ' },
+          ].map(item => (
+            <span
+              key={item.id}
+              style={{
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                color: activeSection === item.id ? '#FFB800' : '#444',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                background: activeSection === item.id ? 'rgba(255,184,0,0.12)' : 'transparent',
+              }}
+              onMouseEnter={e => {
+                if (activeSection !== item.id) (e.currentTarget as HTMLSpanElement).style.color = '#FF6B2B';
+              }}
+              onMouseLeave={e => {
+                if (activeSection !== item.id) (e.currentTarget as HTMLSpanElement).style.color = '#444';
+              }}
+              onClick={() => { document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' }); }}
+            >
+              {item.label}
+            </span>
+          ))}
+        </div>
+      </nav>
+      <div className="px-[20px] py-[24px] md:px-[32px] md:py-[32px] lg:px-[72px] lg:py-[56px] max-w-7xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -107,35 +144,6 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
       >
         {/* Title */}
         <SectionTitle>РЕГЛАМЕНТ РАБОТ</SectionTitle>
-
-        {/* Sticky Nav */}
-        <nav style={{ position: 'sticky', top: 64, zIndex: 40, background: 'var(--bg-card)', borderBottom: '1px solid var(--border)', display: 'flex', gap: '8px', padding: '10px 0', marginBottom: '24px' }}>
-          {[
-            { id: 'stages', label: 'ЭТАПЫ' },
-            { id: 'important', label: 'ВАЖНО' },
-            { id: 'benefits', label: 'ЧТО ДАЁТ' },
-          ].map(item => (
-            <button
-              key={item.id}
-              onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' })}
-              style={{
-                fontFamily: 'Orbitron, monospace',
-                fontSize: '13px',
-                fontWeight: 700,
-                letterSpacing: '1px',
-                padding: '8px 20px',
-                borderRadius: '8px',
-                border: activeSection === item.id ? '2px solid #FFB800' : '2px solid transparent',
-                background: activeSection === item.id ? 'rgba(255,184,0,0.15)' : 'transparent',
-                color: activeSection === item.id ? '#FFB800' : 'var(--text-secondary)',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
-        </nav>
 
         {/* БЛОК 1 */}
         <div className="mb-20">
@@ -168,7 +176,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
         </div>
 
         {/* БЛОК 2 */}
-        <div id="stages" style={{ scrollMarginTop: '120px' }}>
+        <div id="stages" style={{ scrollMarginTop: '64px' }}>
           <SectionTitle>ЭТАПЫ ФОРМИРОВАНИЯ AI-ПРОЕКТА</SectionTitle>
           <p className="font-dm text-[16px] text-[var(--text-secondary)] mb-12">
             От задачи заказчика до работающего продукта в продакшене
@@ -254,7 +262,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
           </div>
 
           {/* БЛОК 3: ВАЖНО */}
-          <div id="important" className="mt-24" style={{ scrollMarginTop: '120px' }}>
+          <div id="important" className="mt-24" style={{ scrollMarginTop: '64px' }}>
             <SectionTitle>ВАЖНО</SectionTitle>
             <p className="font-dm text-[16px] text-[var(--text-secondary)] mb-12">
               Два принципа, на которых строится каждый проект
@@ -346,7 +354,7 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
           </div>
 
           {/* БЛОК 4: ЧТО ДАЁТ ВНЕДРЕНИЕ AI */}
-          <div id="benefits" className="mt-24" style={{ scrollMarginTop: '120px' }}>
+          <div id="benefits" className="mt-24" style={{ scrollMarginTop: '64px' }}>
             <SectionTitle>ЧТО ДАЁТ ВНЕДРЕНИЕ AI</SectionTitle>
             <p className="font-dm text-[16px] text-[var(--text-secondary)] mb-12">
               Три результата, которые получает каждый заказчик
@@ -464,5 +472,6 @@ export default function RegulationPage({ setActiveTab }: { setActiveTab?: (tab: 
         </button>
       )}
     </div>
+    </>
   );
 }
