@@ -120,23 +120,18 @@ function ArchModule({ onRegulation }: { onRegulation?: () => void }) {
         .arch-cards-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 40px;
+          gap: 32px;
         }
-        @media (max-width: 1024px) {
-          .arch-cards-grid { gap: 24px; }
-        }
-        @media (max-width: 767px) {
+        @media (max-width: 768px) {
           .arch-cards-grid {
             grid-template-columns: 1fr;
             gap: 16px;
           }
+          .arch-card-title { font-size: 16px !important; }
+          .arch-card-text  { padding: 16px !important; }
         }
-        .arch-card-title { font-size: 15px; }
+        .arch-card-title { font-size: 16px; }
         .arch-card-text  { padding: 16px 20px; }
-        @media (max-width: 639px) {
-          .arch-card-title { font-size: 13px; }
-          .arch-card-text  { padding: 12px 16px; }
-        }
       `}</style>
 
       <div className="arch-cards-grid">
