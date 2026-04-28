@@ -70,6 +70,12 @@ export default function App() {
   }, [activeTab, isAdminRoute, isPrivacyRoute]);
 
   useEffect(() => {
+    if (!isAdminRoute) {
+      window.scrollTo(0, 0);
+    }
+  }, [activeTab, isAdminRoute]);
+
+  useEffect(() => {
     if (isAdminRoute) return;
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
