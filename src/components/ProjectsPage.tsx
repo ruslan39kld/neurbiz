@@ -42,7 +42,21 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
         } catch {}
       }
 
-      // Fetch from static JSON file — canonical source, always preferred over localStorage
+      // Check localStorage first — admin edits take priority over static JSON
+      const adminSaved = localStorage.getItem('portfolio_projects');
+      if (adminSaved) {
+        try {
+          const parsed = JSON.parse(adminSaved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const normalized = parsed.map(normalizeProjectImages);
+            setProjectsData(normalized);
+            sessionStorage.setItem('cache_projects', JSON.stringify(normalized));
+            return;
+          }
+        } catch {}
+      }
+
+      // Fetch from static JSON file — only if no localStorage data (first visit / after reset)
       try {
         const res = await fetch('/data/projects.json');
         if (res.ok) {
@@ -52,27 +66,11 @@ export default function ProjectsPage({ setActiveTab }: { setActiveTab?: (tab: st
             const normalizedData = data.map(normalizeProjectImages);
             setProjectsData(normalizedData);
             sessionStorage.setItem('cache_projects', JSON.stringify(normalizedData));
-            // Keep localStorage in sync so admin panel and AboutPage see fresh data
             localStorage.setItem('portfolio_projects', JSON.stringify(normalizedData));
             return;
           }
         }
       } catch {}
-
-      // Fallback to localStorage if JSON fetch fails (offline / server error)
-      const adminSaved = localStorage.getItem('portfolio_projects');
-      if (adminSaved) {
-        try {
-          const parsed = JSON.parse(adminSaved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            // Normalize image paths in localStorage data
-            const normalized = parsed.map(normalizeProjectImages);
-            setProjectsData(normalized);
-            sessionStorage.setItem('cache_projects', JSON.stringify(normalized));
-            return;
-          }
-        } catch {}
-      }
 
       // Final fallback: hardcoded defaults from src/data.ts
     };
