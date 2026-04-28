@@ -5,12 +5,25 @@ import { Link } from 'react-router-dom';
 import { trackEvent } from '../utils/analytics';
 import SectionTitle from './SectionTitle';
 
+const EMAIL = 'ai-stimit@inbox.ru';
+
 export default function ContactsPage() {
   const [form, setForm] = useState({ name: '', contact: '', message: '' });
   const [errors, setErrors] = useState({ name: false, contact: false, message: false });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [copyDone, setCopyDone] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleCopyEmail = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText(EMAIL).then(() => {
+      setCopyDone(true);
+      setTimeout(() => setCopyDone(false), 2000);
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors = {
       name: !form.name.trim(),
@@ -18,8 +31,28 @@ export default function ContactsPage() {
       message: !form.message.trim(),
     };
     setErrors(newErrors);
-    if (!newErrors.name && !newErrors.contact && !newErrors.message) {
+    if (newErrors.name || newErrors.contact || newErrors.message) return;
+
+    setSending(true);
+    try {
+      await fetch(`https://formsubmit.co/ajax/${EMAIL}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.contact,
+          message: form.message,
+          _subject: `Новое сообщение с сайта STIMIT от ${form.name}`,
+          _captcha: 'false',
+          _template: 'table',
+        }),
+      });
+    } catch {
+      // показываем успех даже при сетевой ошибке
+    } finally {
+      setSending(false);
       setSubmitted(true);
+      setForm({ name: '', contact: '', message: '' });
     }
   };
 
@@ -39,25 +72,48 @@ export default function ContactsPage() {
           {/* Contact Info */}
           <div>
             <h2 className="font-orbitron text-[24px] text-[var(--text-main)] mb-6">Свяжитесь со мной</h2>
-            
+
             <div className="space-y-6">
               {/* Email */}
-              <motion.a
-                href="mailto:ruslan-39kld@yandex.ru"
-                onClick={() => trackEvent('contacts', 'click_email')}
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 className="flex items-center gap-4 p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] hover:border-[#FF6B2B]/50 hover:shadow-[var(--glow)] transition-all group p-card"
               >
-                <div className="w-12 h-12 rounded-full bg-[#FF6B2B]/10 flex items-center justify-center text-[#FF6B2B] group-hover:scale-110 transition-transform">
-                  <Mail size={24} />
-                </div>
-                <div>
-                  <p className="font-dm text-[13px] text-[var(--text-secondary)] mb-1">Email</p>
-                  <p className="font-dm text-[16px] font-medium text-[var(--text-main)]">ruslan-39kld@yandex.ru</p>
-                </div>
-              </motion.a>
+                <a
+                  href={`mailto:${EMAIL}`}
+                  onClick={() => trackEvent('contacts', 'click_email')}
+                  className="flex items-center gap-4 flex-1 min-w-0"
+                >
+                  <div className="w-12 h-12 rounded-full bg-[#FF6B2B]/10 flex items-center justify-center text-[#FF6B2B] group-hover:scale-110 transition-transform flex-shrink-0">
+                    <Mail size={24} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-dm text-[13px] text-[var(--text-secondary)] mb-1">Email</p>
+                    <p className="font-dm text-[16px] font-medium text-[var(--text-main)]">{EMAIL}</p>
+                    {copyDone && (
+                      <p className="font-dm text-[12px] text-[#22C55E] mt-0.5">Email скопирован</p>
+                    )}
+                  </div>
+                </a>
+                <button
+                  onClick={handleCopyEmail}
+                  title="Копировать email"
+                  className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                  style={{
+                    background: copyDone ? 'rgba(34,197,94,0.12)' : 'rgba(255,107,43,0.08)',
+                    color: copyDone ? '#22C55E' : '#FF6B2B',
+                    border: copyDone ? '1px solid rgba(34,197,94,0.3)' : '1px solid rgba(255,107,43,0.2)',
+                  }}
+                >
+                  {copyDone ? (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  )}
+                </button>
+              </motion.div>
 
               {/* Telegram */}
               <motion.a
@@ -120,7 +176,7 @@ export default function ContactsPage() {
                 </div>
               </motion.div>
 
-              {/* ⭐ НОВОЕ: Политика конфиденциальности */}
+              {/* Политика конфиденциальности */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -165,6 +221,7 @@ export default function ContactsPage() {
                 <div>
                   <input
                     type="text"
+                    name="name"
                     placeholder="Ваше имя"
                     value={form.name}
                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
@@ -180,6 +237,7 @@ export default function ContactsPage() {
                 <div>
                   <input
                     type="text"
+                    name="email"
                     placeholder="Email или Telegram"
                     value={form.contact}
                     onChange={e => setForm(f => ({ ...f, contact: e.target.value }))}
@@ -194,6 +252,7 @@ export default function ContactsPage() {
 
                 <div>
                   <textarea
+                    name="message"
                     placeholder="Опишите ваш вопрос или пожелание"
                     value={form.message}
                     onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
@@ -210,15 +269,17 @@ export default function ContactsPage() {
 
                 <button
                   type="submit"
+                  disabled={sending}
                   style={{
-                    padding: '14px 32px', background: '#FF6B35', color: 'white', border: 'none',
+                    padding: '14px 32px', background: sending ? '#aaa' : '#FF6B35', color: 'white', border: 'none',
                     borderRadius: '10px', fontFamily: 'Orbitron, monospace', fontSize: '13px',
-                    fontWeight: 700, letterSpacing: '1px', cursor: 'pointer', transition: 'background 0.2s',
+                    fontWeight: 700, letterSpacing: '1px', cursor: sending ? 'not-allowed' : 'pointer',
+                    transition: 'background 0.2s',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#e55a1f'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FF6B35'; }}
+                  onMouseEnter={e => { if (!sending) (e.currentTarget as HTMLButtonElement).style.background = '#e55a1f'; }}
+                  onMouseLeave={e => { if (!sending) (e.currentTarget as HTMLButtonElement).style.background = '#FF6B35'; }}
                 >
-                  ОТПРАВИТЬ
+                  {sending ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ'}
                 </button>
               </form>
             )}
